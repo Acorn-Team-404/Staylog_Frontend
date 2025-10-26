@@ -1,6 +1,6 @@
 import { createHashRouter } from "react-router-dom";
-import App from "../App";
 import Home from "../pages/Home";
+import App from "../../App";
 
 const routes = [ 
   { path: "/index.html", element: <Home /> }, // spring boot 최초 실행 정보 추가
