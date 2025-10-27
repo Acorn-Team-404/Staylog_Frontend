@@ -1,13 +1,17 @@
-// src/api/index.js
+// src/api/index.ts
 
 import axios from "axios";
 
-// baseURL 값으로 /api 를 기본으로 가지고 있는 axios 객체를 만들어서  
+// baseURL 값으로 /api 를 기본으로 가지고 있는 axios 객체를 만들어서
 const api = axios.create({
-    baseURL:"/api"
+    baseURL: "/api",
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    withCredentials: true, // 쿠키 자동 전송/수신
 });
 
-// 요청 인터셉터 (예: 토큰 자동 추가)
+// 요청 인터셉터 (토큰 자동 추가)
 api.interceptors.request.use((config) => {
   // const token = localStorage.token; 과 동일한 동작
     const token = localStorage.getItem('token');
@@ -19,5 +23,5 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
-//리턴해준다. 
+//리턴해준다.
 export default api;

@@ -28,9 +28,9 @@ function Modal({ isOpen, onClose, mode }: ModalProps) {
                   ></button>
                </div>
                <div className="modal-body p-4 pt-0">
-                  
+
                   {/* 타입이 추가될 때마다 항목 추가해서 사용하면 됩니다. */}
-                  {mode == 'login' && <LoginForm />}
+                  {mode == 'login' && <LoginForm onSuccess={onClose} />}
                   {mode == 'search' && <SearchForm />}
 
 
