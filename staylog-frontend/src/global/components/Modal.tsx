@@ -1,4 +1,4 @@
-import SearchForm from "../../domain/accommodation/pages/SearchForm";
+import SearchForm from "../../domain/search/pages/SearchForm";
 import LoginForm from "../../domain/auth/pages/LoginForm";
 import type { ModalProps } from "../types/ModalMode";
 
