@@ -41,7 +41,7 @@ function Navbar() {
 
    return (
       <>
-         <nav className="navbar navbar-expand-lg border-bottom border-1 border-secondary shadow-sm" style={{ backgroundColor: '#ebebebff' }}>
+         <nav className="navbar fixed-top navbar-expand-lg border-bottom border-1 border-secondary shadow-sm" style={{ backgroundColor: '#ebebebff' }}>
             <div className="container-fluid w-75">
 
                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

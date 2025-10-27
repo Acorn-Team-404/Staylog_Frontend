@@ -9,10 +9,10 @@ import type { ErrorResponse } from '../../../global/types/api';
 import './LoginForm.css';
 
 interface LoginFormProps {
-  onSuccess?: () => void; // 모달에서 사용시 로그인 성공 후 콜백
+  onClose?: () => void; // 모달에서 사용시 로그인 성공 후 콜백
 }
 
-function LoginForm({ onSuccess }: LoginFormProps = {}) {
+function LoginForm({ onClose }: LoginFormProps = {}) {
   const navigate = useNavigate();
   const location = useLocation();
   const isModal = location.pathname !== '/login'; // 모달인지 페이지인지 확인
@@ -78,8 +78,8 @@ function LoginForm({ onSuccess }: LoginFormProps = {}) {
       // RefreshToken은 HttpOnly 쿠키로 자동 관리됨
 
       // 로그인 성공 처리
-      if (onSuccess) {
-        onSuccess(); // 모달인 경우 콜백 실행
+      if (onClose) {
+        onClose(); // 모달인 경우 콜백 실행
       } else {
         navigate('/'); // 페이지인 경우 홈으로 이동
       }
@@ -181,7 +181,7 @@ function LoginForm({ onSuccess }: LoginFormProps = {}) {
             <button
               type="button"
               className="btn-signup"
-              onClick={() => navigate('/signup')}
+              onClick={() => {onClose?.(), navigate('/signup')}}
               disabled={loading}
             >
               신규 회원 가입

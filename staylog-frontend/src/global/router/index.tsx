@@ -2,11 +2,13 @@ import { createHashRouter } from "react-router-dom";
 import Home from "../pages/Home";
 import LoginForm from "../../domain/auth/pages/LoginForm";
 import App from "../../App";
+import SignupForm from "../../domain/auth/pages/SignupForm";
 
 const routes = [
   { path: "/index.html", element: <Home /> }, // spring boot 최초 실행 정보 추가
   { path: "/", element: <Home /> },
   { path: "/login", element: <LoginForm /> },
+  { path: "/signup", element: <SignupForm /> },
 ];
 
 // router 객체
