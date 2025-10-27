@@ -1,7 +1,11 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState, type FormEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { login } from '../api';
 import type { LoginRequest } from '../types';
+import { MessageUtil } from '../../../global/utils/messageUtil';
+import { ErrorCode } from '../../../global/constants/ResponseCode';
+import { VALIDATION_MESSAGES } from '../../../global/constants/messages';
+import type { ErrorResponse } from '../../../global/types/api';
 import './LoginForm.css';
 
 interface LoginFormProps {
@@ -25,13 +29,13 @@ function LoginForm({ onSuccess }: LoginFormProps = {}) {
     const newErrors: Partial<LoginRequest> = {};
 
     if (!formData.loginId) {
-      newErrors.loginId = '아이디를 입력해주세요.';
+      newErrors.loginId = VALIDATION_MESSAGES.LOGIN_ID_REQUIRED;
     }
 
     if (!formData.password) {
-      newErrors.password = '비밀번호를 입력해주세요.';
+      newErrors.password = VALIDATION_MESSAGES.PASSWORD_REQUIRED;
     } else if (formData.password.length < 4) {
-      newErrors.password = '비밀번호는 최소 4자 이상이어야 합니다.'; //임시로함ㅋ
+      newErrors.password = '비밀번호는 최소 4자 이상이어야 합니다.'; // TODO: 백엔드 정책에 맞게 수정 필요
     }
 
     setErrors(newErrors);
@@ -82,15 +86,29 @@ function LoginForm({ onSuccess }: LoginFormProps = {}) {
     } catch (error: any) {
       console.error('로그인 실패:', error);
 
-      // 에러 메시지 처리
-      if (error.response?.status === 401) {
-        setApiError('아이디 또는 비밀번호가 올바르지 않습니다.');
-      } else if (error.response?.status === 404) {
-        setApiError('존재하지 않는 사용자입니다.');
-      } else if (error.response?.data?.message) {
-        setApiError(error.response.data.message);
+      // 에러 메시지 처리 (중앙집중식 코드 관리 사용)
+      if (error.response?.data) {
+        const errorData = error.response.data as ErrorResponse;
+
+        // 백엔드에서 ErrorCode를 반환한 경우
+        if (errorData.code) {
+          setApiError(MessageUtil.getMessageFromResponse(errorData));
+        } else if (errorData.message) {
+          // ErrorCode 없이 메시지만 있는 경우
+          setApiError(errorData.message);
+        } else {
+          // 응답 데이터는 있지만 형식이 맞지 않는 경우
+          setApiError(MessageUtil.getMessageFromHttpStatus(error.response.status));
+        }
+      } else if (error.response?.status) {
+        // HTTP 상태 코드만 있는 경우
+        setApiError(MessageUtil.getMessageFromHttpStatus(error.response.status));
+      } else if (error.request) {
+        // 요청은 보냈지만 응답을 받지 못한 경우 (네트워크 에러)
+        setApiError('서버에 연결할 수 없습니다. 네트워크 연결을 확인해주세요.');
       } else {
-        setApiError('로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
+        // 기타 에러
+        setApiError(MessageUtil.getErrorMessage(ErrorCode.INTERNAL_SERVER_ERROR));
       }
     } finally {
       setLoading(false);
