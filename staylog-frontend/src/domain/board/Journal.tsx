@@ -17,7 +17,6 @@ function Journal() {
 
 
 
-    <Button as={NavLink} to="/review">리뷰 게시판으로 이동</Button>
 
     </>
 }
