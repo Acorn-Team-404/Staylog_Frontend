@@ -8,8 +8,10 @@ function App() {
 
   return (
     <>
-    <Navbar></Navbar>
-      {currentOutlet}
+      <Navbar></Navbar>
+      <div className="container" style={{ paddingTop: '82px' }}>
+        {currentOutlet}
+      </div>
     </>
   );
 }

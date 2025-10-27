@@ -4,6 +4,7 @@ import LoginForm from "../../domain/auth/pages/LoginForm";
 import App from "../../App";
 import Review from "../../domain/board/Journal";
 import Journal from "../../domain/board/Journal";
+import SignupForm from "../../domain/auth/pages/SignupForm";
 
 const routes = [
   { path: "/index.html", element: <Home /> }, // spring boot 최초 실행 정보 추가
@@ -11,7 +12,7 @@ const routes = [
   { path: "/login", element: <LoginForm /> },
   { path: "/review", element: <Review /> },
   { path: "/journal", element: <Journal /> },
-
+  { path: "/signup", element: <SignupForm /> }
 ];
 
 // router 객체
