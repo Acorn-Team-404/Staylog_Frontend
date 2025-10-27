@@ -6,7 +6,7 @@ import type { LoginRequest, LoginResponse, SignupRequest, SignupResponse } from 
  * 백엔드 엔드포인트: POST /auth/login
  */
 export const login = async (data: LoginRequest): Promise<LoginResponse> => {
-  const response = await api.post<LoginResponse>('/api/v1/auth/login', data);
+  const response = await api.post<LoginResponse>('/v1/auth/login', data);
   return response.data;
 };
 
@@ -15,7 +15,7 @@ export const login = async (data: LoginRequest): Promise<LoginResponse> => {
  * 백엔드 엔드포인트: POST /auth/logout
  */
 export const logout = async (): Promise<void> => {
-  await api.post('api/v1/auth/logout');
+  await api.post('/v1/auth/logout');
 };
 
 /**
@@ -23,6 +23,6 @@ export const logout = async (): Promise<void> => {
  * 백엔드 엔드포인트: POST /auth/refresh
  */
 export const refreshToken = async (refreshToken: string): Promise<LoginResponse> => {
-  const response = await api.post<LoginResponse>('/auth/refresh', { refreshToken });
+  const response = await api.post<LoginResponse>('/v1/auth/refresh', { refreshToken });
   return response.data;
 };
