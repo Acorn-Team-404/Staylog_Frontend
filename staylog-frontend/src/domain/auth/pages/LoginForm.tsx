@@ -67,13 +67,13 @@ function LoginForm({ onClose }: LoginFormProps = {}) {
 
     try {
       // 백엔드 로그인 API 호출
-      const response = await login(formData);
-
+      const loginResponse = await login(formData);
+      
       // Access Token 저장
-      localStorage.setItem('token', `${response.tokenType} ${response.accessToken}`);
+      localStorage.setItem('token', `${loginResponse.tokenType} ${loginResponse.accessToken}`);
 
       // 사용자 정보 저장 (백엔드 응답에 포함됨)
-      localStorage.setItem('userInfo', JSON.stringify(response.user));
+      localStorage.setItem('userInfo', JSON.stringify(loginResponse.user));
 
       // RefreshToken은 HttpOnly 쿠키로 자동 관리됨
 
