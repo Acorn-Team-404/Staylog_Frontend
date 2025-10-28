@@ -13,9 +13,9 @@ function Home() {
 
 
   return (
-    <div>
+    <>
       <button onClick={handleSubmit}>Api 연결 Test</button>
-    </div>
+    </>
   );
 }
 

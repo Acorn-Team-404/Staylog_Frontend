@@ -1,0 +1,160 @@
+/**
+ * 백엔드 응답 코드 상수
+ * 백엔드의 SuccessCode, ErrorCode와 동일한 코드 체계를 사용합니다.
+ *
+ * Note: TypeScript의 erasableSyntaxOnly 옵션 때문에 enum 대신 const 객체 사용
+ */
+
+/**
+ * 성공 응답 코드
+ * 백엔드: com.staylog.staylog.global.common.code.SuccessCode
+ */
+export const SuccessCode = {
+  // 일반 성공 코드
+  SUCCESS: 'S000',
+  CREATED: 'S001',
+  UPDATED: 'S002',
+  DELETED: 'S003',
+
+  // Auth 도메인 (S100 ~ S199)
+  SIGNUP_SUCCESS: 'S100',
+  LOGIN_SUCCESS: 'S101',
+  LOGOUT_SUCCESS: 'S102',
+  EMAIL_VERIFICATION_SENT: 'S103',
+  EMAIL_VERIFICATION_SUCCESS: 'S104',
+  PASSWORD_RESET_SUCCESS: 'S105',
+  TOKEN_REFRESH_SUCCESS: 'S106',
+
+  // User 도메인 (S200 ~ S299)
+  USER_PROFILE_UPDATED: 'S200',
+  USER_INFO_RETRIEVED: 'S201',
+
+  // Accommodation 도메인 (S300 ~ S399)
+  ACCOMMODATION_SEARCH_SUCCESS: 'S300',
+  ACCOMMODATION_DETAIL_RETRIEVED: 'S301',
+
+  // Booking 도메인 (S400 ~ S499)
+  BOOKING_CREATED: 'S400',
+  BOOKING_RETRIEVED: 'S401',
+  BOOKING_CANCELLED: 'S402',
+
+  // Payment 도메인 (S500 ~ S599)
+  PAYMENT_PREPARED: 'S500',
+  PAYMENT_CONFIRMED: 'S501',
+  PAYMENT_CANCELLED: 'S502',
+
+  // Review 도메인 (S600 ~ S699)
+  REVIEW_CREATED: 'S600',
+  REVIEW_UPDATED: 'S601',
+  REVIEW_DELETED: 'S602',
+  COMMENT_CREATED: 'S603',
+  COMMENT_DELETED: 'S604',
+
+  // Journal 도메인 (S700 ~ S799)
+  JOURNAL_CREATED: 'S700',
+  JOURNAL_UPDATED: 'S701',
+  JOURNAL_DELETED: 'S702',
+
+  // Search 도메인 (S800 ~ S899)
+  SEARCH_SUCCESS: 'S800',
+
+  // Notification 도메인 (S900 ~ S999)
+  NOTIFICATION_RETRIEVED: 'S900',
+  NOTIFICATION_READ: 'S901',
+} as const;
+
+export type SuccessCode = typeof SuccessCode[keyof typeof SuccessCode];
+
+/**
+ * 에러 응답 코드
+ * 백엔드: com.staylog.staylog.global.common.code.ErrorCode
+ */
+export const ErrorCode = {
+  // 일반 에러 코드 (E000 ~ E099)
+  BAD_REQUEST: 'E000',
+  UNAUTHORIZED: 'E001',
+  FORBIDDEN: 'E002',
+  NOT_FOUND: 'E003',
+  METHOD_NOT_ALLOWED: 'E004',
+  CONFLICT: 'E005',
+  INTERNAL_SERVER_ERROR: 'E006',
+  SERVICE_UNAVAILABLE: 'E007',
+  INVALID_INPUT: 'E008',
+  VALIDATION_FAILED: 'E009',
+
+  // Auth 도메인 에러 (E100 ~ E199)
+  DUPLICATE_LOGIN_ID: 'E100',
+  DUPLICATE_EMAIL: 'E101',
+  INVALID_CREDENTIALS: 'E102',
+  EMAIL_VERIFICATION_FAILED: 'E103',
+  EMAIL_SEND_FAILED: 'E104',
+  VERIFICATION_CODE_EXPIRED: 'E105',
+  INVALID_VERIFICATION_CODE: 'E106',
+  PASSWORD_MISMATCH: 'E107',
+  WEAK_PASSWORD: 'E108',
+  TOKEN_EXPIRED: 'E109',
+  INVALID_TOKEN: 'E110',
+  REFRESH_TOKEN_NOT_FOUND: 'E111',
+
+  // User 도메인 에러 (E200 ~ E299)
+  USER_NOT_FOUND: 'E200',
+  USER_ALREADY_EXISTS: 'E201',
+  INVALID_USER_INFO: 'E202',
+  USER_UPDATE_FAILED: 'E203',
+
+  // Accommodation 도메인 에러 (E300 ~ E399)
+  ACCOMMODATION_NOT_FOUND: 'E300',
+  ROOM_NOT_FOUND: 'E301',
+  ROOM_NOT_AVAILABLE: 'E302',
+  INVALID_SEARCH_PARAMS: 'E303',
+
+  // Booking 도메인 에러 (E400 ~ E499)
+  BOOKING_NOT_FOUND: 'E400',
+  BOOKING_ALREADY_EXISTS: 'E401',
+  BOOKING_CANNOT_BE_CANCELLED: 'E402',
+  INVALID_BOOKING_DATE: 'E403',
+  BOOKING_DATE_CONFLICT: 'E404',
+
+  // Payment 도메인 에러 (E500 ~ E599)
+  PAYMENT_NOT_FOUND: 'E500',
+  PAYMENT_ALREADY_PROCESSED: 'E501',
+  PAYMENT_FAILED: 'E502',
+  PAYMENT_AMOUNT_MISMATCH: 'E503',
+  PAYMENT_CANCELLED: 'E504',
+  TOSS_PAYMENT_ERROR: 'E505',
+
+  // Review 도메인 에러 (E600 ~ E699)
+  REVIEW_NOT_FOUND: 'E600',
+  REVIEW_ALREADY_EXISTS: 'E601',
+  REVIEW_PERMISSION_DENIED: 'E602',
+  COMMENT_NOT_FOUND: 'E603',
+  COMMENT_PERMISSION_DENIED: 'E604',
+
+  // Journal 도메인 에러 (E700 ~ E799)
+  JOURNAL_NOT_FOUND: 'E700',
+  JOURNAL_PERMISSION_DENIED: 'E701',
+
+  // Search 도메인 에러 (E800 ~ E899)
+  SEARCH_FAILED: 'E800',
+  INVALID_SEARCH_QUERY: 'E801',
+
+  // Notification 도메인 에러 (E900 ~ E999)
+  NOTIFICATION_NOT_FOUND: 'E900',
+  NOTIFICATION_SEND_FAILED: 'E901',
+} as const;
+
+export type ErrorCode = typeof ErrorCode[keyof typeof ErrorCode];
+
+/**
+ * HTTP 상태 코드와 ErrorCode 매핑
+ */
+export const HTTP_STATUS_TO_ERROR_CODE: Record<number, ErrorCode> = {
+  400: ErrorCode.BAD_REQUEST,
+  401: ErrorCode.UNAUTHORIZED,
+  403: ErrorCode.FORBIDDEN,
+  404: ErrorCode.NOT_FOUND,
+  405: ErrorCode.METHOD_NOT_ALLOWED,
+  409: ErrorCode.CONFLICT,
+  500: ErrorCode.INTERNAL_SERVER_ERROR,
+  503: ErrorCode.SERVICE_UNAVAILABLE,
+};

@@ -1,0 +1,189 @@
+/* 페이지 모드 (전체 화면) */
+.login-form-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  padding: 40px 20px;
+}
+
+/* 모달 모드 */
+.login-form-modal {
+  background-color: #ffffff;
+}
+
+/* 로그인 폼 컨테이너 */
+.login-form-container {
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* 헤더 섹션 */
+.login-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.login-title {
+  font-size: 48px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin: 0;
+  color: #000000;
+}
+
+.login-subtitle {
+  font-size: 16px;
+  color: #666666;
+  margin: 8px 0 20px 0;
+}
+
+.login-divider {
+  width: 100%;
+  height: 2px;
+  background-color: #000000;
+  margin: 0 auto;
+}
+
+/* 에러 메시지 */
+.login-error {
+  background-color: #fee;
+  color: #c33;
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* 로그인 폼 */
+.login-form {
+  margin-top: 30px;
+}
+
+/* 폼 그룹 */
+.form-group {
+  margin-bottom: 30px;
+}
+
+/* 입력 필드 */
+.form-input {
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #cccccc;
+  padding: 10px 0;
+  font-size: 14px;
+  color: #333333;
+  background: transparent;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.form-input::placeholder {
+  color: #999999;
+}
+
+.form-input:focus {
+  border-bottom-color: #4A90E2;
+}
+
+.form-input.error {
+  border-bottom-color: #c33;
+}
+
+.form-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 에러 메시지 */
+.error-message {
+  color: #c33;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+/* 버튼 그룹 */
+.button-group {
+  display: flex;
+  gap: 15px;
+  margin-top: 40px;
+  margin-bottom: 25px;
+}
+
+/* 로그인 버튼 (검은색) */
+.btn-login {
+  flex: 1;
+  padding: 14px 20px;
+  background-color: #000000;
+  color: white;
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-login:hover:not(:disabled) {
+  background-color: #333333;
+}
+
+.btn-login:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 신규 회원 가입 버튼 (흰색 배경, 검은색 테두리) */
+.btn-signup {
+  flex: 1;
+  padding: 14px 20px;
+  background-color: white;
+  color: #000000;
+  border: 2px solid #000000;
+  font-size: 16px;
+  font-weight: normal;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-signup:hover:not(:disabled) {
+  background-color: #f5f5f5;
+}
+
+.btn-signup:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 비밀번호 찾기 섹션 */
+.forgot-password {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.forgot-link {
+  color: #4A90E2;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s;
+}
+
+.forgot-link:hover {
+  color: #357ABD;
+  text-decoration: underline;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 576px) {
+  .login-title {
+    font-size: 36px;
+  }
+
+  .button-group {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
