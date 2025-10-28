@@ -1,6 +1,7 @@
 // src/api/index.ts
 
-import axios from "axios";
+import axios, { AxiosError, type AxiosResponse } from "axios";
+import type { ApiResponse } from "../types";
 
 // baseURL 값으로 /api 를 기본으로 가지고 있는 axios 객체를 만들어서
 const api = axios.create({
@@ -23,5 +24,23 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+
+// ✅ 응답 인터셉터: 공통 구조 통일
+api.interceptors.response.use(
+  (response: AxiosResponse<ApiResponse<any>>) => {
+    const data = response.data;
+
+    if (data.success) {
+      // SuccessResponse<T> 구조니까, 실제 유용한 값은 data.data임
+      return data.data;
+    }
+
+    // success=false인 경우 (에러 코드 등)
+    return Promise.reject(data);
+  },
+  (error: AxiosError) => {
+    return Promise.reject(error);
+  }
+);
 //리턴해준다.
 export default api;
