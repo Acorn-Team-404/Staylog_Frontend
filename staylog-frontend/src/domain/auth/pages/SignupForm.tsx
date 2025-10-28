@@ -3,9 +3,14 @@ import api from "../../../global/api";
 import { useNavigate } from "react-router-dom";
 import type { signupConfirmType, signupDirtyType, signupStateType, signupValidType } from "../types/SignupType";
 import { REGEX_EMAIL, REGEX_LOGIN_ID, REGEX_PASSWORD, REGEX_PHONE } from "../../../global/constants/validation";
+import duplicateCheck from "../utils/DuplicateCheck";
+import sendEmail from "../utils/sendEmail";
+import mailCertify from "../utils/mailCertify";
 
 
 function SignupForm() {
+
+
 
    const navigate = useNavigate();
 
@@ -93,7 +98,7 @@ function SignupForm() {
          default:
             isValid = true; // name처럼 규칙이 없는 필드
       }
-      
+
       // valid 상태 업데이트
       setValid(prev => ({ ...prev, [name]: isValid }));
    }
@@ -114,121 +119,68 @@ function SignupForm() {
 
 
    // 아이디 중복 검사
-   async function handelLoginIdConfirm(e: React.MouseEvent<HTMLButtonElement>) {
-
-      // 유효성 검증
-      if (!valid.loginId) {
-         alert("아이디가 유효하지 않습니다. 다시 확인해주세요.")
-         return;
-      }
-
-      try {
-         await api.get(`/v1/user/loginId/${inputState.loginId}/duplicate`)
-         alert("사용할 수 있는 아이디입니다.")
+   async function handleLoginIdConfirm() {
+      const isConfirm = await duplicateCheck({
+         checkType: "loginId",
+         value: inputState.loginId,
+         valid: valid.loginId
+      });
+      if (isConfirm) {
          setConfirm(prev => ({
             ...prev,
-            loginId: true
-         }));
-
-      } catch (err: any) {
-         console.error("[loginId] 확인 실패:", err);
-         if (err.response && err.response.status === 409) {
-            alert("이미 가입된 아이디입니다.");
-         }
-         else {
-            alert("확인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
-         }
-         setConfirm(prev => ({
-            ...prev,
-            loginId: false
+            loginId: isConfirm
          }));
       }
    }
 
 
    // 닉네임 중복 검사
-   async function handelNicknameConfirm(e: React.MouseEvent<HTMLButtonElement>) {
-
-      // 유효성 검증
-      if (!valid.nickname) {
-         alert("닉네임 유효하지 않습니다. 다시 확인해주세요.")
-         return;
-      }
-
-      try {
-         await api.get(`/v1/user/nickname/${inputState.nickname}/duplicate`)
-         alert("사용할 수 있는 닉네임입니다.")
+   async function handleNicknameConfirm() {
+      const isConfirm = await duplicateCheck({
+         checkType: "nickname",
+         value: inputState.nickname,
+         valid: valid.nickname
+      });
+      if (isConfirm) {
          setConfirm(prev => ({
             ...prev,
-            nickname: true
-         }));
-
-      } catch (err: any) {
-         console.error("[nickname] 확인 실패:", err);
-         if (err.response && err.response.status === 409) {
-            alert("이미 가입된 닉네임입니다.");
-         }
-         else {
-            alert("확인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
-         }
-         setConfirm(prev => ({
-            ...prev,
-            nickname: false
+            nickname: isConfirm
          }));
       }
    }
+
 
    // 인증 메일 발송
-   async function handelEmailSend(e: React.MouseEvent<HTMLButtonElement>) {
+   async function handleEmailSend() {
 
-      // 유효성 검증
-      if (!valid.email) {
-         alert("이메일이 유효하지 않습니다. 다시 확인해주세요.")
-         return;
-      }
+      let isSend = await sendEmail({
+         email: inputState.email,
+         valid: valid.email
+      })
 
-      try {
-         await api.post("/v1/mail-send", { email: inputState.email })
-         setMailSend(true)
+      if (isSend) {
+         setMailSend(isSend)
 
-      } catch (err: any) {
-         console.error("[email] 확인 실패:", err);
-         if (err.response && err.response.status === 409) {
-            alert("이미 사용 중인 이메일입니다.");
-         }
-         else {
-            alert("확인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
-         }
          setConfirm(prev => ({
             ...prev,
-            email: false
+            email: isSend
          }));
       }
+
    }
+
 
 
    // 메일 인증 코드 검증
-   async function mailCertify(e: React.MouseEvent<HTMLButtonElement>) {
-      const MailCheckRequest = {
+   async function mailCodeCheck() {
+      const isCertify = await mailCertify({
          email: inputState.email,
          code: inputState.code
-      }
-
-      try {
-         await api.post("/v1/mail-check", MailCheckRequest)
-         setConfirm(prev => ({
-            ...prev,
-            email: true
-         }));
-         alert("인증 완료")
-      } catch (err) {
-         console.log(err);
-         setConfirm(prev => ({
-            ...prev,
-            email: false
-         }));
-         alert("인증 번호가 유효하지 않습니다.")
-      }
+      })
+      setConfirm(prev => ({
+         ...prev,
+         email: isCertify
+      }));
    }
 
 
@@ -237,11 +189,11 @@ function SignupForm() {
 
       // valid 값 검증
       const allValid = Object.values(valid).every(value => value === true);
-      if(!allValid) {
+      if (!allValid) {
          alert("입력 형식이 올바르지 않은 항목이 있습니다. 확인해주세요.");
          return;
       }
-      
+
       // confirm 값 검증
       const allConfirmed = Object.values(confirm).every(value => value === true);
 
@@ -263,7 +215,7 @@ function SignupForm() {
          await api.post("/v1/user", userInfo)
          alert("회원가입 성공")
          navigate("/")
-      } catch(err) {
+      } catch (err) {
          console.log(err);
          alert("회원가입 실패")
       }
@@ -285,7 +237,7 @@ function SignupForm() {
                   <label htmlFor="loginId" className="form-label fw-bold">아이디</label>
                   <div className="d-flex">
                      <input onChange={handleChange} type="text" className="form-control me-2" name="loginId" id="loginId" value={inputState.loginId} placeholder="아이디를 입력하세요." />
-                     <button onClick={handelLoginIdConfirm} type="button" name="loginId" className="btn btn-outline-secondary flex-shrink-0">중복확인</button>
+                     <button onClick={handleLoginIdConfirm} type="button" name="loginId" className="btn btn-outline-secondary flex-shrink-0">중복확인</button>
                   </div>
                   {dirty.loginId &&
                      (!valid.loginId &&
@@ -322,7 +274,7 @@ function SignupForm() {
                   <label htmlFor="nickname" className="form-label fw-bold">닉네임</label>
                   <div className="d-flex">
                      <input type="text" onChange={handleChange} className="form-control me-2" name="nickname" id="nickname" value={inputState.nickname} placeholder="사용할 닉네임을 입력하세요." />
-                     <button onClick={handelNicknameConfirm} name="nickname" type="button" className="btn btn-outline-secondary flex-shrink-0">중복확인</button>
+                     <button onClick={handleNicknameConfirm} name="nickname" type="button" className="btn btn-outline-secondary flex-shrink-0">중복확인</button>
                   </div>
                   {dirty.nickname &&
                      (!valid.nickname &&
@@ -335,7 +287,7 @@ function SignupForm() {
                   <label htmlFor="email" className="form-label fw-bold">이메일</label>
                   <div className="d-flex">
                      <input type="email" onChange={handleChange} className="form-control me-2" name="email" id="email" value={inputState.email} placeholder="이메일을 입력하세요." />
-                     <button onClick={handelEmailSend} name="email" type="button" className="btn btn-outline-secondary flex-shrink-0">인증요청</button>
+                     <button onClick={handleEmailSend} name="email" type="button" className="btn btn-outline-secondary flex-shrink-0">인증요청</button>
                   </div>
                   {dirty.email &&
                      (!valid.email &&
@@ -344,7 +296,7 @@ function SignupForm() {
                   {mailSend && (
                      <>
                         <input onChange={handleChange} type="text" className="form-control me-2" name="code" id="code" value={inputState.code} placeholder="인증코드를 입력하세요." />
-                        <button onClick={mailCertify} type="button" className="btn btn-outline-primary flex-shrink-0">인증확인</button>
+                        <button onClick={mailCodeCheck} type="button" className="btn btn-outline-primary flex-shrink-0">인증확인</button>
                      </>
                   )}
 
