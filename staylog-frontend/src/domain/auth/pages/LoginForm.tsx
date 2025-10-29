@@ -79,8 +79,6 @@ function LoginForm({ onClose }: LoginFormProps = {}) {
 
       // Access Token 저장
       localStorage.setItem('token', `${loginResponse.tokenType} ${loginResponse.accessToken}`);
-      // 사용자 정보 저장 (백엔드 응답에 포함됨)
-      localStorage.setItem('userInfo', JSON.stringify(loginResponse.user));
 
 
       // Redux Store에 저장 (앱 전역 상태 관리를 위해)
