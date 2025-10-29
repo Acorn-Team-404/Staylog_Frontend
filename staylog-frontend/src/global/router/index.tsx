@@ -3,12 +3,15 @@ import Home from "../pages/Home";
 import LoginForm from "../../domain/auth/pages/LoginForm";
 import App from "../../App";
 import SignupForm from "../../domain/auth/pages/SignupForm";
+import AccommodationDetail from "../../domain/accommodation/pages/AccommodationDetail";
+import { ReservationProvider } from "../../domain/accommodation/hooks/useReservation";
 
 const routes = [
   { path: "/index.html", element: <Home /> }, // spring boot 최초 실행 정보 추가
   { path: "/", element: <Home /> },
   { path: "/login", element: <LoginForm /> },
   { path: "/signup", element: <SignupForm /> },
+  { path: "/accommodations/:id", element:<AccommodationDetail />}
 ];
 
 // router 객체
