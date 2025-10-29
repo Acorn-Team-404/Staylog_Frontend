@@ -8,7 +8,7 @@ import { roleOptions, statusOptions, mapDtoToAdminUser } from "../types/AdminTyp
 function AdminPage() {
     
     // 유저 목록을 상태 값으로 관리
-    const [users, setUsers] = useState<AdminUserDto[]>([]);
+    const [users, setUsers] = useState<AdminUser[]>([]);
     // 현재 수정중인 유저 ID 상태 값 관리
     const [updatingUserId, setupdatingUserId] = useState<number | null>(null);
 
