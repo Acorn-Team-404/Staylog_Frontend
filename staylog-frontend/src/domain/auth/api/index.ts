@@ -6,9 +6,8 @@ import type { LoginRequest, LoginResponse, SignupRequest, SignupResponse } from 
  * 백엔드 엔드포인트: POST /auth/login
  */
 export const login = async (data: LoginRequest): Promise<LoginResponse> => {
-  const loginResponse = await api.post<LoginResponse>('/v1/auth/login', data);
-  console.log("loginResponse : " ,  loginResponse);
-  return loginResponse;
+  const response = await api.post<LoginResponse>('/v1/auth/login', data);
+  return response.data;
 };
 
 /**
