@@ -18,6 +18,8 @@ function AdminPage() {
     .then(res => {
         const list = Array.isArray(res?.data?.users) ? (res.data.users as AdminUserDto[]) : [];
         setUsers(list.map(mapDtoToAdminUser));
+        console.log(res.data);
+        
     })
     .catch(err=> {
         console.log("유저 목록 조회 불가: ",err);
