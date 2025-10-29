@@ -14,15 +14,18 @@ function AdminPage() {
 
     // 전체 유저 목록 조회
     useEffect(() => {
-    api.get("/v1/admin/users", { params: { pageNum: 1 } })
-    .then(res => {
-        const list = Array.isArray(res?.data?.users) ? (res.data.users as AdminUserDto[]) : [];
-        setUsers(list.map(mapDtoToAdminUser));
+  api
+    .get<{ users: AdminUserDto[] }, { users: AdminUserDto[] }>(
+      "/v1/admin/users",
+      { params: { pageNum: 1 } }
+    )
+    .then((res) => {
+      // ✅ 이제 payload는 AxiosResponse가 아니라 { users: [...] } 로 인식됨
+      const list = Array.isArray(res.users) ? res.users : [];
+      setUsers(list.map(mapDtoToAdminUser));
     })
-    .catch(err=> {
-        console.log("유저 목록 조회 불가: ",err);
-    })
-    }, []);
+    .catch((err) => console.error("유저 목록 조회 불가:", err));
+}, []);
     // 유저 권한 변경을 위한 함수
     async function onChangeRole(userId : number, nextRole: Role) {
         // 현재 값 저장을 저장한다 (실패시 롤백)

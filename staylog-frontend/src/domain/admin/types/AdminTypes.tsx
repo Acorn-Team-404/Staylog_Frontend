@@ -1,5 +1,6 @@
 // 서버에서 받아오는 원본 Dto
 export interface AdminUserDto {
+  
    userId : number;
    name : string;
    email : string;
@@ -32,6 +33,7 @@ export interface AdminUser {
 // 변환 함수 (DTO → UI)
 export function mapDtoToAdminUser(dto: AdminUserDto): AdminUser {
   return {
+      
     userId: dto.userId,
     name: dto.name,
     email: dto.email,
@@ -41,4 +43,6 @@ export function mapDtoToAdminUser(dto: AdminUserDto): AdminUser {
     lastLogin: dto.lastLogin,
     status: dto.status as MemberStatus,
   };
+
+
 }
