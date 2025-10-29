@@ -3,9 +3,15 @@ import { Link, NavLink } from "react-router-dom";
 import Modal from "./Modal";
 import type { ModalMode } from "../types/ModalMode";
 import NotiCanvas from "../../domain/notification/pages/NotiCanvas";
+import { useSelector } from "react-redux";
+import type { RootState } from "../store/types";
 
 
 function Navbar() {
+
+   const nickname = useSelector((state: RootState) => {
+	return state.userInfo?.nickname // 없을 수도 있으니 -> ?.
+})
 
    // 모달 활성화 관리 상태값
    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -67,7 +73,11 @@ function Navbar() {
                      </li>
                   </ul>
 
-                  <ul className="navbar-nav flex-fill justify-content-end mb-2 mb-lg-0 gap-4">
+                  
+
+                  <ul className="navbar-nav flex-fill justify-content-end mb-2 mb-lg-0 gap-4 align-items-center">
+                     
+                     {nickname && <span>{nickname}</span>}
                      <li onClick={() => openModal("login")} className="nav-item"><i className="bi bi-person-circle" style={{ fontSize: '32px', cursor: 'pointer' }}></i></li>
                      <li onClick={() => openNoti()} className="nav-item"><i className="bi bi-bell-fill" style={{ fontSize: '32px', cursor: 'pointer' }}></i></li>
                   </ul>
