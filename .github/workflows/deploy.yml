@@ -27,6 +27,8 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+          # 상위 경로에서 package-lock.json을 찾으려 하다 오류 발생으로 직접 경로 지정
+          cache-dependency-path: staylog-frontend/package-lock.json
       
       - name: Install deps
         run: cd staylog-frontend && npm ci
