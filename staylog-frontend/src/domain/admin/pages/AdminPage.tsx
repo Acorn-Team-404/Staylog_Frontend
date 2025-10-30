@@ -15,7 +15,7 @@ function AdminPage() {
     // 전체 유저 목록 조회
     useEffect(() => {
   api
-    .get<{ users: AdminUserDto[] }, { users: AdminUserDto[] }>(
+    .get<{ users: AdminUserDto[] }>(
       "/v1/admin/users",
       { params: { pageNum: 1 } }
     )
@@ -43,7 +43,7 @@ function AdminPage() {
         } catch(err) {
             console.log("유저 권한을 변경에 실패하였습니다.");
             // 실패시 롤백
-            setUsers(list => list.map(user => userId === userId ? {
+            setUsers(list => list.map(user => user.userId === userId ? {
                 ...user,
                 role : prev ?? user.role
             }: user));
