@@ -4,7 +4,7 @@ name: Build & Deploy React (Hello EC2)
 # master 브랜치에 commit 이 push 될 때 동작하라는 의미
 on:
   push:
-    branches: [ main ]
+    branches: [ deploy_test ]
 
 permissions:
   contents: read
