@@ -3,6 +3,9 @@ import Home from "../pages/Home";
 import LoginForm from "../../domain/auth/pages/LoginForm";
 import App from "../../App";
 import SignupForm from "../../domain/auth/pages/SignupForm";
+import RoomDetail from "../../domain/accommodation/pages/RoomDetail";
+import AccommodationDetail from "../../domain/accommodation/pages/AccommodationDetail";
+import { ReservationProvider } from "../../domain/accommodation/hooks/useReservation";
 import AdminPage from "../../domain/admin/pages/AdminPage";
 
 
@@ -11,6 +14,8 @@ const routes = [
   { path: "/", element: <Home /> },
   { path: "/login", element: <LoginForm /> },
   { path: "/signup", element: <SignupForm /> },
+  { path: "/room/:roomId", element: <RoomDetail />},
+  { path: "/accommodations/:id", element:<AccommodationDetail />},
   { path: "/admin", element: <AdminPage /> },
 ];
 
