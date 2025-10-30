@@ -57,4 +57,4 @@ jobs:
           key:      ${{ secrets.EC2_SSH_KEY }}
           source:   "staylog-frontend/dist/**"                 # staylog-frontend/dist/ 하위 전체
           target:   "/home/ec2-user/nginx/nginx-html"
-          strip_components: 1                 # staylog-frontend/dist/ 제거 → 내용만 배치
+          strip_components: 2                 # staylog-frontend/dist/ 제거 → 내용만 배치
