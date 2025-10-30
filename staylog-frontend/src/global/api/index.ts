@@ -25,22 +25,33 @@ api.interceptors.request.use((config) => {
 });
 
 
-// ✅ 응답 인터셉터: 공통 구조 통일
+// 응답 인터셉터: 성공 시 data만 반환, 실패 시 Promise.reject
 api.interceptors.response.use(
-  (response: AxiosResponse<ApiResponse<any>>) => {
-    const data = response.data;
+  <T = any>(response: AxiosResponse<ApiResponse<T>>): T | Promise<never> => {
+    const { data } = response;
 
-    if (data.success) {
-      // SuccessResponse<T> 구조니까, 실제 유용한 값은 data.data임
+    if (data.success && data.data !== undefined) {
       return data.data;
     }
 
-    // success=false인 경우 (에러 코드 등)
     return Promise.reject(data);
   },
-  (error: AxiosError) => {
-    return Promise.reject(error);
-  }
+  (error: AxiosError) => Promise.reject(error)
 );
-//리턴해준다.
-export default api;
+
+/**
+ * 커스텀 Axios 인스턴스 타입 정의
+ * 응답 인터셉터가 ApiResponse<T>의 data 필드를 자동으로 추출하므로,
+ * 메서드 반환 타입을 Promise<T>로 정의
+ */
+interface CustomAxiosInstance {
+  get<T = any>(url: string, config?: any): Promise<T>;
+  post<T = any>(url: string, data?: any, config?: any): Promise<T>;
+  put<T = any>(url: string, data?: any, config?: any): Promise<T>;
+  delete<T = any>(url: string, config?: any): Promise<T>;
+  patch<T = any>(url: string, data?: any, config?: any): Promise<T>;
+  request<T = any>(config: any): Promise<T>;
+}
+
+// 타입 캐스팅하여 export
+export default api as unknown as CustomAxiosInstance;

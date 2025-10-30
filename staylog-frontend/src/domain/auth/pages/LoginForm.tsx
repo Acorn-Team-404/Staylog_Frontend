@@ -73,6 +73,9 @@ function LoginForm({ onClose }: LoginFormProps = {}) {
       const loginResponse = await login(formData);
       
       // API 응답에서 토큰과 유저 정보 추출
+      console.log(loginResponse)
+      
+
       const fullToken = `${loginResponse.tokenType} ${loginResponse.accessToken}`;
       const user: UserInfo = loginResponse.user;
 
@@ -80,7 +83,7 @@ function LoginForm({ onClose }: LoginFormProps = {}) {
       // Access Token 저장
       localStorage.setItem('token', `${loginResponse.tokenType} ${loginResponse.accessToken}`);
 
-
+ 
       // Redux Store에 저장 (앱 전역 상태 관리를 위해)
       dispatch({ type: 'SET_TOKEN', payload: fullToken });
       dispatch({ type: 'USER_INFO', payload: user });
