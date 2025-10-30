@@ -29,11 +29,8 @@ export interface UserInfo {
   userId: number;
   loginId: string;
   nickname: string;
-  email: string;
-  profileImage?: string;
-  role: string;
-  status: string;
-  lastLogin?: string; 
+  // profileImage?: string;
+  // role: string;
 }
 
 /**

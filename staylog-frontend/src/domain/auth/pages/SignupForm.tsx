@@ -1,54 +1,29 @@
 import { useEffect, useState, type ChangeEvent } from "react";
-
-
-interface inputStateType {
-   loginId: string
-   password: string
-   password2: string
-   nickname: string
-   name: string
-   email: string
-   phone: string
-}
-
-interface signupValidType {
-   loginId: boolean
-   password: boolean
-   password2: boolean
-   nickname: boolean
-   email: boolean
-   name: boolean
-   phone: boolean
-}
-
-interface signupDirtyType {
-   loginId: boolean
-   password: boolean
-   password2: boolean
-   nickname: boolean
-   name: boolean
-   email: boolean
-   phone: boolean
-}
-
-interface signupConfirmType {
-   loginId: boolean
-   nickname: boolean
-   email: boolean
-}
+import api from "../../../global/api";
+import { useNavigate } from "react-router-dom";
+import type { signupConfirmType, signupDirtyType, signupStateType, signupValidType } from "../types/SignupType";
+import { REGEX_EMAIL, REGEX_LOGIN_ID, REGEX_PASSWORD, REGEX_PHONE } from "../../../global/constants/validation";
+import duplicateCheck from "../utils/DuplicateCheck";
+import sendEmail from "../utils/sendEmail";
+import mailCertify from "../utils/mailCertify";
 
 
 function SignupForm() {
 
+
+
+   const navigate = useNavigate();
+
    // 입력 상태값
-   const [inputState, setInputState] = useState<inputStateType>({
+   const [inputState, setInputState] = useState<signupStateType>({
       loginId: "",
       password: "",
       password2: "",
       nickname: "",
       name: "",
       email: "",
-      phone: ""
+      phone: "",
+      code: ""
    })
 
    // 한 번이라도 입력되었는지
@@ -75,18 +50,17 @@ function SignupForm() {
 
 
    // 중복확인 및 인증 여부
-   const [ confirm, setConfirm ] = useState<signupConfirmType>({
+   const [confirm, setConfirm] = useState<signupConfirmType>({
       loginId: false,
       nickname: false,
       email: false
    })
 
+   // 메일 발송 여부 상태값
+   const [mailSend, setMailSend] = useState<boolean>(false)
 
-   const regLoginId = /^(?![0-9]+$)[a-zA-Z0-9]{4,16}$/
-   const regPassword = /^(?=.*[A-Z])(?=.*[\W_]).{8,}$/
-   const regEmail = /^\S+@\S+\.\S+$/
-   const regPhone = /^[0-9]+-[0-9]+-[0-9]+$/
 
+   // 입력값 변경 및 dirty/valid 업데이트 함수
    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
       const { name, value } = e.currentTarget
       setInputState(prev => ({
@@ -97,62 +71,155 @@ function SignupForm() {
          ...prev,
          [name]: true
       }))
-      // 유효성 검사 실행
+
+      // 정규표현식을 사용한 유효성 검사
       let isValid = false;
       switch (name) {
          case "loginId":
-            isValid = regLoginId.test(value);
+            isValid = REGEX_LOGIN_ID.test(value);
             break;
          case "password":
-            isValid = regPassword.test(value);
+            isValid = REGEX_PASSWORD.test(value);
             break;
          case "email":
-            isValid = regEmail.test(value);
+            isValid = REGEX_EMAIL.test(value);
             break;
          case "phone":
-            isValid = regPhone.test(value);
+            isValid = REGEX_PHONE.test(value);
             break;
-         // 닉네임, 이름 등 단순 필수 값은 비어있지 않은지만 체크
          case "nickname":
          case "name":
             isValid = value.trim().length > 0;
             break;
          // password2는 useEffect에서 별도 처리
          case "password2":
-            // 일단 '비어있지 않음' 정도만 체크하거나, 
-            // 여기서도 비교 로직을 넣을 수 있지만 useEffect가 더 명확해요.
-            // 여기서는 일단 비워둡시다. useEffect가 덮어쓸 거예요.
-            isValid = true; // 혹은 value.length > 0
+            isValid = true; // useEffect에서 false로 바뀔 수 있음
             break;
          default:
             isValid = true; // name처럼 규칙이 없는 필드
       }
+
       // valid 상태 업데이트
-      // (password2는 여기서 true여도 useEffect에서 false로 바뀔 수 있음)
       setValid(prev => ({ ...prev, [name]: isValid }));
    }
 
 
+   // password 일치 여부를 검증하기 위한 useEffect
    useEffect(() => {
-      // 둘 다 비어있지 않고, 서로 일치하는지 검사
       const isMatch = inputState.password.length > 0 &&
          inputState.password === inputState.password2;
 
-      // password2 필드의 유효성만 콕 집어서 업데이트
+      // password2의 유효성만 업데이트
       setValid(prev => ({
          ...prev,
          password2: isMatch
       }));
-
-      // 'password' 또는 'password2' 값이 바뀔 때마다 이 로직을 실행
    }, [inputState.password, inputState.password2]);
 
 
 
-   function handelConfirm(e: React.MouseEvent<HTMLButtonElement>) {
+   // 아이디 중복 검사
+   async function handleLoginIdConfirm() {
+      const isConfirm = await duplicateCheck({
+         checkType: "loginId",
+         value: inputState.loginId,
+         valid: valid.loginId
+      });
+      if (isConfirm) {
+         setConfirm(prev => ({
+            ...prev,
+            loginId: isConfirm
+         }));
+      }
+   }
+
+
+   // 닉네임 중복 검사
+   async function handleNicknameConfirm() {
+      const isConfirm = await duplicateCheck({
+         checkType: "nickname",
+         value: inputState.nickname,
+         valid: valid.nickname
+      });
+      if (isConfirm) {
+         setConfirm(prev => ({
+            ...prev,
+            nickname: isConfirm
+         }));
+      }
+   }
+
+
+   // 인증 메일 발송
+   async function handleEmailSend() {
+
+      let isSend = await sendEmail({
+         email: inputState.email,
+         valid: valid.email
+      })
+
+      if (isSend) {
+         setMailSend(isSend)
+
+         setConfirm(prev => ({
+            ...prev,
+            email: isSend
+         }));
+      }
 
    }
 
+
+
+   // 메일 인증 코드 검증
+   async function mailCodeCheck() {
+      const isCertify = await mailCertify({
+         email: inputState.email,
+         code: inputState.code
+      })
+      setConfirm(prev => ({
+         ...prev,
+         email: isCertify
+      }));
+   }
+
+
+   // 회원가입 요청 함수
+   async function handleSubmit() {
+
+      // valid 값 검증
+      const allValid = Object.values(valid).every(value => value === true);
+      if (!allValid) {
+         alert("입력 형식이 올바르지 않은 항목이 있습니다. 확인해주세요.");
+         return;
+      }
+
+      // confirm 값 검증
+      const allConfirmed = Object.values(confirm).every(value => value === true);
+
+      if (!allConfirmed) {
+         alert("아이디/닉네임 중복 확인 및 이메일 인증을 완료해주세요.");
+         return;
+      }
+
+      const userInfo = {
+         loginId: inputState.loginId,
+         password: inputState.password,
+         nickname: inputState.nickname,
+         name: inputState.name,
+         email: inputState.email,
+         phone: inputState.phone
+      }
+
+      try {
+         await api.post("/v1/user", userInfo)
+         alert("회원가입 성공")
+         navigate("/")
+      } catch (err) {
+         console.log(err);
+         alert("회원가입 실패")
+      }
+   }
 
 
    return (
@@ -170,13 +237,12 @@ function SignupForm() {
                   <label htmlFor="loginId" className="form-label fw-bold">아이디</label>
                   <div className="d-flex">
                      <input onChange={handleChange} type="text" className="form-control me-2" name="loginId" id="loginId" value={inputState.loginId} placeholder="아이디를 입력하세요." />
-                     <button onClick={handelConfirm} type="button" name="loginId" className="btn btn-outline-secondary flex-shrink-0">중복확인</button>
+                     <button onClick={handleLoginIdConfirm} type="button" name="loginId" className="btn btn-outline-secondary flex-shrink-0">중복확인</button>
                   </div>
-                  { dirty.loginId &&
-                  (valid.loginId
-                     ? <p className="form-text text-success mt-1">유효함</p>
-                     : <p className="form-text text-danger mt-1">유효하지 않은 아이디입니다. 영문을 포함하여 4글자 이상 입력해주세요</p>
-                  )}
+                  {dirty.loginId &&
+                     (!valid.loginId &&
+                        <p className="form-text text-danger mt-1">유효하지 않은 아이디입니다. 영문을 포함하여 4~16글자 입력해주세요</p>
+                     )}
                </div>
 
 
@@ -185,11 +251,10 @@ function SignupForm() {
                   <div className="d-flex">
                      <input type="password" onChange={handleChange} className="form-control me-2" name="password" id="password" value={inputState.password} placeholder="비밀번호를 입력하세요." />
                   </div>
-                  { dirty.password &&
-                  (valid.password
-                     ? <p className="form-text text-success mt-1">유효함</p>
-                     : <p className="form-text text-danger mt-1">유효하지 않은 비밀번호입니다. 대문자 + 소문자 + 특수문자 조합으로 8글자 이상 입력해주세요</p>
-                  )}
+                  {dirty.password &&
+                     (!valid.password &&
+                        <p className="form-text text-danger mt-1">유효하지 않은 비밀번호입니다. 대문자 + 소문자 + 특수문자 조합으로 8글자 이상 입력해주세요</p>
+                     )}
                </div>
 
 
@@ -198,11 +263,10 @@ function SignupForm() {
                   <div className="d-flex">
                      <input type="password" onChange={handleChange} className="form-control me-2" name="password2" id="password2" value={inputState.password2} placeholder="한번 더 비밀번호를 입력하세요." />
                   </div>
-                  { dirty.password2 &&
-                  (valid.password2
-                     ? <p className="form-text text-success mt-1">유효함</p>
-                     : <p className="form-text text-danger mt-1">비밀번호가 일치하지 않습니다.</p>
-                  )}
+                  {dirty.password2 &&
+                     (!valid.password2 &&
+                        <p className="form-text text-danger mt-1">비밀번호가 일치하지 않습니다.</p>
+                     )}
                </div>
 
 
@@ -210,13 +274,12 @@ function SignupForm() {
                   <label htmlFor="nickname" className="form-label fw-bold">닉네임</label>
                   <div className="d-flex">
                      <input type="text" onChange={handleChange} className="form-control me-2" name="nickname" id="nickname" value={inputState.nickname} placeholder="사용할 닉네임을 입력하세요." />
-                     <button onClick={handelConfirm} name="nickname" type="button" className="btn btn-outline-secondary flex-shrink-0">중복확인</button>
+                     <button onClick={handleNicknameConfirm} name="nickname" type="button" className="btn btn-outline-secondary flex-shrink-0">중복확인</button>
                   </div>
-                  { dirty.nickname &&
-                  (valid.nickname
-                     ? ""
-                     : <p className="form-text text-danger mt-1">닉네임을 입력해주세요</p>
-                  )}
+                  {dirty.nickname &&
+                     (!valid.nickname &&
+                        <p className="form-text text-danger mt-1">닉네임을 입력해주세요</p>
+                     )}
                </div>
 
 
@@ -224,13 +287,19 @@ function SignupForm() {
                   <label htmlFor="email" className="form-label fw-bold">이메일</label>
                   <div className="d-flex">
                      <input type="email" onChange={handleChange} className="form-control me-2" name="email" id="email" value={inputState.email} placeholder="이메일을 입력하세요." />
-                     <button onClick={handelConfirm} name="email" type="button" className="btn btn-outline-secondary flex-shrink-0">인증요청</button>
+                     <button onClick={handleEmailSend} name="email" type="button" className="btn btn-outline-secondary flex-shrink-0">인증요청</button>
                   </div>
-                  { dirty.email &&
-                  (valid.email
-                     ? <p className="form-text text-success mt-1">유효함</p>
-                     : <p className="form-text text-danger mt-1">이메일 형식으로 입력해주세요</p>
+                  {dirty.email &&
+                     (!valid.email &&
+                        <p className="form-text text-danger mt-1">이메일 형식으로 입력해주세요</p>
+                     )}
+                  {mailSend && (
+                     <>
+                        <input onChange={handleChange} type="text" className="form-control me-2" name="code" id="code" value={inputState.code} placeholder="인증코드를 입력하세요." />
+                        <button onClick={mailCodeCheck} type="button" className="btn btn-outline-primary flex-shrink-0">인증확인</button>
+                     </>
                   )}
+
                </div>
 
 
@@ -239,11 +308,10 @@ function SignupForm() {
                   <div className="d-flex">
                      <input type="text" onChange={handleChange} className="form-control me-2" name="name" id="name" value={inputState.name} placeholder="이름을 입력하세요." />
                   </div>
-                  { dirty.name &&
-                  (valid.name
-                     ? ""
-                     : <p className="form-text text-danger mt-1">이름을 입력해주세요</p>
-                  )}
+                  {dirty.name &&
+                     (!valid.name &&
+                        <p className="form-text text-danger mt-1">이름을 입력해주세요</p>
+                     )}
                </div>
 
 
@@ -253,16 +321,15 @@ function SignupForm() {
                   <div className="d-flex">
                      <input type="text" onChange={handleChange} className="form-control me-2" name="phone" id="phone" value={inputState.phone} placeholder="휴대폰 번호를 입력하세요." />
                   </div>
-                  { dirty.phone &&
-                  (valid.phone
-                     ? <p className="form-text text-success mt-1">유효함</p>
-                     : <p className="form-text text-danger mt-1">'-'를 포함하여 입력해주세요</p>
-                  )}
+                  {dirty.phone &&
+                     (!valid.phone &&
+                        <p className="form-text text-danger mt-1">'-'를 포함하여 입력해주세요</p>
+                     )}
                </div>
 
 
                <div className="mt-5">
-                  <button type="submit" className="btn btn-dark w-100 py-2">
+                  <button onClick={handleSubmit} type="button" className="btn btn-dark w-100 py-2">
                      가입 하기
                   </button>
                </div>
