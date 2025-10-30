@@ -35,9 +35,6 @@ jobs:
       # 우리가 업로드한 react vite 프로젝트를 이용해서 build 한다.
       - name: Build (Vite)
         run: cd staylog-frontend && npm run build   # 빌드한 결과물: ./dist 내부
-        env:
-          CI: "false"
-          DISABLE_ESLINT_PLUGIN: "true"
 
       - name: Clean remote dir
         uses: appleboy/ssh-action@v1.2.0
