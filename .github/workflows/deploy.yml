@@ -37,12 +37,7 @@ jobs:
         run: cd staylog-frontend && npm run build   # 빌드한 결과물: ./dist 내부
         env:
           CI: "false"
-      
-      - name: Build (ignore ESLint)
-        run: npm run build
-        env:
           DISABLE_ESLINT_PLUGIN: "true"
-
 
       - name: Clean remote dir
         uses: appleboy/ssh-action@v1.2.0
