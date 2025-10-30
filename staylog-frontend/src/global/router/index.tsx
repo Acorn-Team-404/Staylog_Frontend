@@ -2,9 +2,9 @@ import { createHashRouter } from "react-router-dom";
 import Home from "../pages/Home";
 import LoginForm from "../../domain/auth/pages/LoginForm";
 import App from "../../App";
-import Review from "../../domain/board/Journal";
-import Journal from "../../domain/board/Journal";
+import Journal from "../../domain/journal/pages/Journal";
 import SignupForm from "../../domain/auth/pages/SignupForm";
+import Review from "../../domain/review/pages/Review";
 
 const routes = [
   { path: "/index.html", element: <Home /> }, // spring boot 최초 실행 정보 추가
