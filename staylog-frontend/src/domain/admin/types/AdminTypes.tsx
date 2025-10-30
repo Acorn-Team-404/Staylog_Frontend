@@ -17,6 +17,7 @@ export type MemberStatus = "ACTIVE" | "INACTIVE" | "WITHDRAWN";
 export const roleOptions: Role[] = ["USER", "VIP", "ADMIN"];
 export const statusOptions: MemberStatus[] = ["ACTIVE", "INACTIVE", "WITHDRAWN"];
 
+
 // UI 표시용으로 정의
 export interface AdminUser {
   userId: number;

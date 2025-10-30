@@ -6,6 +6,12 @@ import type { AdminUserDto, AdminUser, Role, MemberStatus } from "../types/Admin
 import { roleOptions, statusOptions, mapDtoToAdminUser } from "../types/AdminTypes";
 
 function AdminPage() {
+
+      const STATUS_COLORS: Record<MemberStatus, string> = {
+    ACTIVE: "#28a745",      // green
+    INACTIVE: "#ffc107",    // yellow
+    WITHDRAWN: "#dc3545",   // red
+  };
     
     // 유저 목록을 상태 값으로 관리
     const [users, setUsers] = useState<AdminUser[]>([]);
@@ -20,12 +26,13 @@ function AdminPage() {
       { params: { pageNum: 1 } }
     )
     .then((res) => {
-      // ✅ 이제 payload는 AxiosResponse가 아니라 { users: [...] } 로 인식됨
+      // ✅ 이제 res는 AxiosResponse가 아니라 { users: [...] } 로 인식됨
       const list = Array.isArray(res.users) ? res.users : [];
       setUsers(list.map(mapDtoToAdminUser));
     })
     .catch((err) => console.error("유저 목록 조회 불가:", err));
 }, []);
+
     // 유저 권한 변경을 위한 함수
     async function onChangeRole(userId : number, nextRole: Role) {
         // 현재 값 저장을 저장한다 (실패시 롤백)
@@ -46,6 +53,31 @@ function AdminPage() {
             setUsers(list => list.map(user => user.userId === userId ? {
                 ...user,
                 role : prev ?? user.role
+            }: user));
+        } finally {
+            setupdatingUserId(null);
+        }
+    }
+    // 유저 상태 변경을 위한 함수
+    async function onChangeStatus(userId : number, nextStatus: MemberStatus){
+        // 현재 값 저장 (실패시 롤백)
+        const prev = users.find(user => user.userId === userId)?.status;
+
+        // 변경중인 유저 표시
+                setupdatingUserId(userId);
+        setUsers(list => list.map(user => user.userId === userId ? {
+            ...user,
+            status: nextStatus
+        } : user));
+        // 상태 변경 API 호출
+        try {
+            await api.patch(`/v1/admin/users/${userId}/status`, {status: nextStatus})
+        } catch (err) {
+            console.log("유저 상태 변경을 실패하였습니다.");
+            // 실패시 롤백
+            setUsers(list => list.map(user => user.userId === userId ? {
+                ...user,
+                status : prev ?? user.status
             }: user));
         } finally {
             setupdatingUserId(null);
@@ -86,13 +118,33 @@ function AdminPage() {
                         <td>{formatKST(user.createdAt)}</td>
                         <td>{formatKST(user.updatedAt)}</td>
                         <td>{formatKST(user.lastLogin)}</td>
-                        <td>{user.status}</td>
+                        <td>
+                  <select
+                    value={user.status}
+                    disabled={updatingUserId === user.userId}
+                    onChange={(e) =>
+                      onChangeStatus(user.userId, e.target.value as MemberStatus)
+                    }
+                    className="form-select form-select-sm text-white"
+                    style={{
+                      backgroundColor: STATUS_COLORS[user.status] ?? "#6c757d",
+                       width: "140px",
+                    }}
+                  >
+                    {statusOptions.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
+                  </select>
+                        </td>
                     </tr>
                 ))}
             </tbody>
         </table>
     </div>
     );
+    
 }
 
 export default AdminPage;
