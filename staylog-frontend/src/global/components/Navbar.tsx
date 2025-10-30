@@ -3,9 +3,15 @@ import { Link, NavLink } from "react-router-dom";
 import Modal from "./Modal";
 import type { ModalMode } from "../types/ModalMode";
 import NotiCanvas from "../../domain/notification/pages/NotiCanvas";
+import { useSelector } from "react-redux";
+import type { RootState } from "../store/types";
 
 
 function Navbar() {
+
+   const nickname = useSelector((state: RootState) => {
+	return state.userInfo?.nickname // 없을 수도 있으니 -> ?.
+})
 
    // 모달 활성화 관리 상태값
    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -41,7 +47,7 @@ function Navbar() {
 
    return (
       <>
-         <nav className="navbar navbar-expand-lg border-bottom border-1 border-secondary shadow-sm" style={{ backgroundColor: '#ebebebff' }}>
+         <nav className="navbar fixed-top navbar-expand-lg border-bottom border-1 border-secondary shadow-sm" style={{ backgroundColor: '#ebebebff' }}>
             <div className="container-fluid w-75">
 
                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,7 +73,11 @@ function Navbar() {
                      </li>
                   </ul>
 
-                  <ul className="navbar-nav flex-fill justify-content-end mb-2 mb-lg-0 gap-4">
+                  
+
+                  <ul className="navbar-nav flex-fill justify-content-end mb-2 mb-lg-0 gap-4 align-items-center">
+                     
+                     {nickname && <span>{nickname}</span>}
                      <li onClick={() => openModal("login")} className="nav-item"><i className="bi bi-person-circle" style={{ fontSize: '32px', cursor: 'pointer' }}></i></li>
                      <li onClick={() => openNoti()} className="nav-item"><i className="bi bi-bell-fill" style={{ fontSize: '32px', cursor: 'pointer' }}></i></li>
                   </ul>

@@ -7,12 +7,15 @@ import { ErrorCode } from '../../../global/constants/ResponseCode';
 import { VALIDATION_MESSAGES } from '../../../global/constants/messages';
 import type { ErrorResponse } from '../../../global/types/api';
 import './LoginForm.css';
+import { useDispatch } from 'react-redux';
+import type { UserInfo } from '../../../global/store/types';
 
 interface LoginFormProps {
-  onSuccess?: () => void; // 모달에서 사용시 로그인 성공 후 콜백
+  onClose?: () => void; // 모달에서 사용시 로그인 성공 후 콜백
 }
 
-function LoginForm({ onSuccess }: LoginFormProps = {}) {
+function LoginForm({ onClose }: LoginFormProps = {}) {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const isModal = location.pathname !== '/login'; // 모달인지 페이지인지 확인
@@ -67,19 +70,29 @@ function LoginForm({ onSuccess }: LoginFormProps = {}) {
 
     try {
       // 백엔드 로그인 API 호출
-      const response = await login(formData);
+      const loginResponse = await login(formData);
+      
+      // API 응답에서 토큰과 유저 정보 추출
+      console.log(loginResponse)
+      
+
+      const fullToken = `${loginResponse.tokenType} ${loginResponse.accessToken}`;
+      const user: UserInfo = loginResponse.user;
+
 
       // Access Token 저장
-      localStorage.setItem('token', `${response.tokenType} ${response.accessToken}`);
+      localStorage.setItem('token', `${loginResponse.tokenType} ${loginResponse.accessToken}`);
 
-      // 사용자 정보 저장 (백엔드 응답에 포함됨)
-      localStorage.setItem('userInfo', JSON.stringify(response.user));
+ 
+      // Redux Store에 저장 (앱 전역 상태 관리를 위해)
+      dispatch({ type: 'SET_TOKEN', payload: fullToken });
+      dispatch({ type: 'USER_INFO', payload: user });
 
       // RefreshToken은 HttpOnly 쿠키로 자동 관리됨
 
       // 로그인 성공 처리
-      if (onSuccess) {
-        onSuccess(); // 모달인 경우 콜백 실행
+      if (onClose) {
+        onClose(); // 모달인 경우 콜백 실행
       } else {
         navigate('/'); // 페이지인 경우 홈으로 이동
       }
@@ -181,7 +194,7 @@ function LoginForm({ onSuccess }: LoginFormProps = {}) {
             <button
               type="button"
               className="btn-signup"
-              onClick={() => navigate('/signup')}
+              onClick={() => {onClose?.(), navigate('/signup')}}
               disabled={loading}
             >
               신규 회원 가입
