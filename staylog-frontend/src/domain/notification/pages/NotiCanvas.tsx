@@ -66,7 +66,12 @@ function NotiCanvas({ isOpen, onClose }: NotiCanvasProps) {
    async function handleDelete(notiId: number) {
       if (confirm("알림을 삭제하시겠습니까?")) {
          try {
-            // TODO: 삭제 로직 구현
+            await api.delete(`/v1/notification/${notiId}/delete`)
+
+            // 상태값에 반영하여 화면 렌더링
+            setNotiList((prevNotiList) =>
+               prevNotiList.filter((noti) => noti.notiId !== notiId)
+            );
          } catch (err) {
             console.log(err);
          }
