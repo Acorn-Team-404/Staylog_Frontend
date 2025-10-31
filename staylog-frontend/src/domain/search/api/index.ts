@@ -11,7 +11,7 @@ export const searchAccommodations = async (
   const response = await api.get<AccommodationListItem[]>('/v1/search/accommodations', {
     params,
     paramsSerializer: {
-      indexes: null, // regionCodes[] 배열을 ?regionCodes=경기&regionCodes=서울 형식으로 직렬화
+      indexes: null, // regionCodes[] 배열을 ?regionCodes=경기&regionCodes=서울 형식으로 직렬화.
     },
   });
   return response;
