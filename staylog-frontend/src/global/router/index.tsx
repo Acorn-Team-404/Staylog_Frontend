@@ -9,6 +9,8 @@ import SignupForm from "../../domain/auth/pages/SignupForm";
 import Journal from "../../domain/board/pages/Journal";
 import Review from "../../domain/board/pages/Review";
 
+import AccommodationListPage from "../../domain/accommodation/pages/AccommodationListPage";
+import { ReservationProvider } from "../../domain/accommodation/hooks/useReservation";
 import AdminPage from "../../domain/admin/pages/AdminPage";
 import BoardForm from "../../domain/board/pages/BoardForm";
 
@@ -25,8 +27,9 @@ const routes = [
 
 
   { path: "/signup", element: <SignupForm /> },
-  { path: "/room/:roomId", element: <RoomDetail />},
+  { path: "/accommodations", element: <AccommodationListPage /> }, // 숙소 리스트 페이지
   { path: "/accommodations/:id", element:<AccommodationDetail />},
+  { path: "/room/:roomId", element: <RoomDetail />},
   { path: "/admin", element: <AdminPage /> },
 
 ];

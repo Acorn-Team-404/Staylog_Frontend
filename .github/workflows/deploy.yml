@@ -1,0 +1,60 @@
+# .git/workflows/deploy.yml
+name: Build & Deploy React (Hello EC2)
+
+# master 브랜치에 commit 이 push 될 때 동작하라는 의미
+on:
+  push:
+    branches: [ deploy_test ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-react-ec2-staylog-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest  # ubuntu-latest 이미지를 이용해서 실행한 컨테이너에서 작업하기
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      # nodejs 를 컨테이너에 설치하고
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          # 상위 경로에서 package-lock.json을 찾으려 하다 오류 발생으로 직접 경로 지정
+          cache-dependency-path: staylog-frontend/package-lock.json
+      
+      - name: Install deps
+        run: cd staylog-frontend && npm ci
+      # 우리가 업로드한 react vite 프로젝트를 이용해서 build 한다.
+      - name: Build (Vite)
+        run: cd staylog-frontend && npm run build   # 빌드한 결과물: ./dist 내부
+
+      - name: Clean remote dir
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host:     ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key:      ${{ secrets.EC2_SSH_KEY }}
+          # EC2 서버에 접속해서 실행할 명령어
+          script: |
+            set -e
+            DEPLOY_DIR="/home/ec2-user/nginx/nginx-html"
+            mkdir -p "$DEPLOY_DIR"
+            rm -rf "$DEPLOY_DIR"/*
+
+      - name: Upload dist to EC2 (strip folder)
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host:     ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key:      ${{ secrets.EC2_SSH_KEY }}
+          source:   "staylog-frontend/dist/**"                 # staylog-frontend/dist/ 하위 전체
+          target:   "/home/ec2-user/nginx/nginx-html"
+          strip_components: 2                 # staylog-frontend/dist/ 제거 → 내용만 배치
