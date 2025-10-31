@@ -1,15 +1,16 @@
 import { createHashRouter } from "react-router-dom";
-import Home from "../pages/Home";
-import LoginForm from "../../domain/auth/pages/LoginForm";
 import App from "../../App";
+import LoginForm from "../../domain/auth/pages/LoginForm";
+import Home from "../pages/Home";
 
-import Review from "../../domain/board/Journal";
-import Journal from "../../domain/board/Journal";
-import SignupForm from "../../domain/auth/pages/SignupForm";
-import RoomDetail from "../../domain/accommodation/pages/RoomDetail";
 import AccommodationDetail from "../../domain/accommodation/pages/AccommodationDetail";
-import { ReservationProvider } from "../../domain/accommodation/hooks/useReservation";
+import RoomDetail from "../../domain/accommodation/pages/RoomDetail";
+import SignupForm from "../../domain/auth/pages/SignupForm";
+import Journal from "../../domain/board/pages/Journal";
+import Review from "../../domain/board/pages/Review";
+
 import AdminPage from "../../domain/admin/pages/AdminPage";
+import BoardForm from "../../domain/board/pages/BoardForm";
 
 
 
@@ -20,6 +21,7 @@ const routes = [
 
   { path: "/review", element: <Review /> },
   { path: "/journal", element: <Journal /> },
+  { path: "/boardForm", element: <BoardForm /> },
 
 
   { path: "/signup", element: <SignupForm /> },
