@@ -6,7 +6,7 @@ import type { NotificationCardState, responseNotification } from '../types/Notif
 import useGetLoginIdFromToken from '../../auth/hooks/useGetLoginIdFromToken';
 import api from '../../../global/api';
 import useGetUserIdFromToken from '../../auth/hooks/useGetUserIdFromToken';
-import notificationFormatter from '../utils/NotificationFormatter';
+import notificationFormatter from '../utils/notificationFormatter';
 
 export interface NotiCanvasProps {
    isOpen: boolean;
