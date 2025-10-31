@@ -1,6 +1,7 @@
-import { Card, Image } from "react-bootstrap";
+import { Card, CloseButton, Image } from "react-bootstrap";
 import '../../../global/css/BootstrapCustomCss.css';
-import type { NotificationCardType } from "../types/NotificationCardType";
+import { useState } from "react";
+import type { NotificationCardProps } from '../types/NotificationCardType';
 
 
 /**
@@ -12,14 +13,36 @@ import type { NotificationCardType } from "../types/NotificationCardType";
  * @param typeName 알림의 종류
  * @param message 알림 내용
  * @param timeAgo 알림 생성일로부터 얼마나 지났는지
+ * @param isRead 알림 읽음 여부
  */
-function NotificationCard({imageUrl, date, title, typeName, message, timeAgo}: NotificationCardType) {
+function NotificationCard({ notiId, imageUrl, date, title, typeName, message, timeAgo, isRead, handleDelete }: NotificationCardProps) {
+
+  // 알림 카드에 마우스가 올라갔는지 여부 (delete 버튼을 활성화시킬 용도)
+  const [mouseOver, setMouseOver] = useState(false);
+
+
+  // mouseOver 상태값 변경 함수
+  function handleMouseEnter() {
+    setMouseOver(true)
+  }
+
+  // mouseOver 상태값 변경 함수
+  function handleMouseReave() {
+    setMouseOver(false)
+  }
+
+
+
+
   return (
     <>
-      <Card style={{ width: '90%', borderRadius: '10px 45px 10px 10px' }} className="mx-auto position-relative bg-secondary-subtle border-0 shadow-sm cursor-pointer mb-4">
-        <span className="position-absolute" style={{ top: '2px', right: '2px', width: '10px', height: '10px', backgroundColor: '#ee6f6fff', borderRadius: '50%', }} />
+      <Card onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseReave} style={{ width: '90%', borderRadius: '10px 45px 10px 10px' }} className="mx-auto position-relative bg-secondary-subtle border-0 shadow-sm cursor-pointer mb-4">
+
+        <span className="position-absolute" style={{ top: '2px', right: '2px', width: '10px', height: '10px', backgroundColor: '#ee6f6fff', borderRadius: '50%', opacity: (!mouseOver && isRead == 'N') ? 1 : 0, transition: 'opacity 0.2s ease-in-out', pointerEvents: 'none' }} />
+        <CloseButton onClick={() => handleDelete(notiId)} aria-label="알림 닫기" style={{ position: 'absolute', top: '2px', right: '2px', fontSize: '0.5rem', opacity: mouseOver ? 1 : 0, pointerEvents: mouseOver ? 'auto' : 'none' }} />
+
         <Card.Body className="d-flex align-items-center p-3">
-          <Image src={imageUrl} style={{ width: '85px', height: '85px', objectFit: 'cover', }} className="rounded-3" />
+          <Image src="https://picsum.photos/id/237/200/300" style={{ width: '85px', height: '85px', objectFit: 'cover', }} className="rounded-3" />
           <div className="flex-grow-1">
             <Card.Text as="small" className="text-muted mb-1 d-block ms-3 fs-8">{date}</Card.Text>
             <div className="d-flex justify-content-between align-items-baseline mb-1">
