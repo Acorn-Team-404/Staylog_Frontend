@@ -1,12 +1,9 @@
 // src/domain/board/types/boardtypes.tsx
 
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
-import type { BoardDto } from "../types/boardtypes";
-import axios from "axios";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../../global/api";
-import { Button } from "react-bootstrap";
-import { NavLink } from "react-router-dom";
+import type { BoardDto } from "../types/boardtypes";
 
 import ToastEditor from "../components/ToastEditor";
 
@@ -55,7 +52,7 @@ function BoardForm() {
 
         try {
 
-            const res = await api.post("/v1/board", dto);
+            const res = await api.post("/v1/boards", dto);
             alert("게시글 등록 성공")
             navigate("/review")
         } catch (err) {
