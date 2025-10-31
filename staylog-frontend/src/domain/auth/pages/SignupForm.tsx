@@ -1,11 +1,11 @@
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useState } from "react";
 import api from "../../../global/api";
 import { useNavigate } from "react-router-dom";
 import type { signupConfirmType, signupDirtyType, signupStateType, signupValidType } from "../types/SignupType";
-import { REGEX_EMAIL, REGEX_LOGIN_ID, REGEX_PASSWORD, REGEX_PHONE } from "../../../global/constants/validation";
-import duplicateCheck from "../utils/DuplicateCheck";
 import sendEmail from "../utils/sendEmail";
 import mailCertify from "../utils/mailCertify";
+import { REGEX_EMAIL, REGEX_LOGIN_ID, REGEX_PASSWORD, REGEX_PHONE } from "../../../global/constants/Validation";
+import duplicateCheck from "../utils/duplicateCheck";
 
 
 function SignupForm() {

@@ -5,6 +5,7 @@ import App from "../../App";
 import SignupForm from "../../domain/auth/pages/SignupForm";
 import RoomDetail from "../../domain/accommodation/pages/RoomDetail";
 import AccommodationDetail from "../../domain/accommodation/pages/AccommodationDetail";
+import AccommodationListPage from "../../domain/accommodation/pages/AccommodationListPage";
 import { ReservationProvider } from "../../domain/accommodation/hooks/useReservation";
 import AdminPage from "../../domain/admin/pages/AdminPage";
 
@@ -14,8 +15,9 @@ const routes = [
   { path: "/", element: <Home /> },
   { path: "/login", element: <LoginForm /> },
   { path: "/signup", element: <SignupForm /> },
-  { path: "/room/:roomId", element: <RoomDetail />},
+  { path: "/accommodations", element: <AccommodationListPage /> }, // 숙소 리스트 페이지
   { path: "/accommodations/:id", element:<AccommodationDetail />},
+  { path: "/room/:roomId", element: <RoomDetail />},
   { path: "/admin", element: <AdminPage /> },
 ];
 
