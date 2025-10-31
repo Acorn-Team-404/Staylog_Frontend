@@ -17,6 +17,16 @@ export type MemberStatus = "ACTIVE" | "INACTIVE" | "WITHDRAWN";
 export const roleOptions: Role[] = ["USER", "VIP", "ADMIN"];
 export const statusOptions: MemberStatus[] = ["ACTIVE", "INACTIVE", "WITHDRAWN"];
 
+// ✅ 상세조회 DTO (목록 + 추가 필드들)
+export type AdminUserDetailDto = AdminUserDto & {
+  phone?: string | null;
+  gender?: "M" | "F" | "U" | null;
+  birthDate?: string | null;
+  profileImageUrl?: string | null;
+  withdrawnAt?: string | null;
+  memo?: string | null;
+};
+
 // UI 표시용으로 정의
 export interface AdminUser {
   userId: number;
@@ -43,6 +53,5 @@ export function mapDtoToAdminUser(dto: AdminUserDto): AdminUser {
     lastLogin: dto.lastLogin,
     status: dto.status as MemberStatus,
   };
-
 
 }
