@@ -1,14 +1,7 @@
 import { Card, Image } from "react-bootstrap";
 import '../../../global/css/BootstrapCustomCss.css';
+import type { NotificationCardType } from "../types/NotificationCardType";
 
-interface NotificationCardType {
-  imageUrl: string
-  date: string
-  title: string
-  typeName: string
-  message: string
-  timeAgo: string
-}
 
 /**
  * 알림 카드 컴포넌트
@@ -19,7 +12,6 @@ interface NotificationCardType {
  * @param typeName 알림의 종류
  * @param message 알림 내용
  * @param timeAgo 알림 생성일로부터 얼마나 지났는지
- * @returns NotificationCard (알림 카드)
  */
 function NotificationCard({imageUrl, date, title, typeName, message, timeAgo}: NotificationCardType) {
   return (
