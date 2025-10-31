@@ -6,6 +6,7 @@ import type { NotificationCardState, responseNotification } from '../types/Notif
 import useGetLoginIdFromToken from '../../auth/hooks/useGetLoginIdFromToken';
 import api from '../../../global/api';
 import useGetUserIdFromToken from '../../auth/hooks/useGetUserIdFromToken';
+import notificationFormatter from '../utils/NotificationFormatter';
 
 export interface NotiCanvasProps {
    isOpen: boolean;
@@ -40,23 +41,15 @@ function NotiCanvas({ isOpen, onClose }: NotiCanvasProps) {
 
             const rawDataList: responseNotification[] = response
 
-            const processedList: NotificationCardState[] = rawDataList.map((item) => {
+            const processedList: NotificationCardState[] = rawDataList.map((rawItem) => {
+
                let details: any = {};
                try {
-                  details = JSON.parse(item.details)
+                  details = JSON.parse(rawItem.details)
                } catch (err) {
-                  console.error("JSON parse error:", item.details, err);
+                  console.error("JSON parse error:", rawItem.details, err);
                }
-               return {
-                  notiId: item.notiId,
-                  imageUrl: "https://picsum.photos/id/237/200/300",
-                  date: item.createdAt,
-                  title: details.accommodationName,
-                  message: details.message,
-                  typeName: details.typeName,
-                  timeAgo: item.createdAt,
-                  isRead: item.isRead
-               };
+               return notificationFormatter({ rawItem, details });
             })
 
             setNotiList(processedList)

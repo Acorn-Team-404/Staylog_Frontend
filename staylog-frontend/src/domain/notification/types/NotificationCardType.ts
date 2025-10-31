@@ -32,3 +32,9 @@ export interface NotificationCardState {
 export interface NotificationCardProps extends NotificationCardState {
   handleDelete: (notiId: number) => void
 }
+
+
+export interface NotificationFormatterProps {
+  rawItem: responseNotification
+  details: any
+}
