@@ -120,7 +120,7 @@ export default function AdminUserDetailModal({ userId, open, onClose }: Props) {
                             <dt className="col-4">성별</dt>
                             <dd className="col-8">{data.gender ?? "—"}</dd>
                             <dt className="col-4">생년월일</dt>
-                            <dd className="col-8">{data.birthDate ?? "—"}</dd>
+                            <dd className="col-8">{data.birthDate ? data.birthDate.split(" ")[0] : "—"}</dd> {/* YYYY-MM-DD로 출력되게 하려고 수정*/}
                           </dl>
                         </div>
                       </div>
