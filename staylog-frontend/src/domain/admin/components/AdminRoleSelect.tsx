@@ -1,6 +1,9 @@
 import { roleOptions } from "../../admin/types/AdminTypes";
 import type { Role } from "../../admin/types/AdminTypes";
 
+/**
+ * 권한 선택 컴포넌트
+ */
 interface Props {
   value: Role;
   disabled: boolean;

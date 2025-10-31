@@ -4,8 +4,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { formatKST } from "../../../global/utils/date";
 import type { AdminUserDto, AdminUser, Role, MemberStatus } from "../types/AdminTypes";
 import { roleOptions, statusOptions, mapDtoToAdminUser } from "../types/AdminTypes";
+import AdminUserDetailModal from "../components/AdminUserDetailModal";
 
 function AdminPage() {
+
+    const [detailOpen, setDetailOpen] = useState(false);
+    const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
       const STATUS_COLORS: Record<MemberStatus, string> = {
     ACTIVE: "#28a745",      // green
@@ -18,13 +22,10 @@ function AdminPage() {
     // 현재 수정중인 유저 ID 상태 값 관리
     const [updatingUserId, setupdatingUserId] = useState<number | null>(null);
 
-    // 전체 유저 목록 조회
+    // 전체 유저 목록 조회 
     useEffect(() => {
   api
-    .get<{ users: AdminUserDto[] }>(
-      "/v1/admin/users",
-      { params: { pageNum: 1 } }
-    )
+    .get<{ users: AdminUserDto[] }> ("/v1/admin/users",{ params: { pageNum: 1 } })
     .then((res) => {
       // ✅ 이제 res는 AxiosResponse가 아니라 { users: [...] } 로 인식됨
       const list = Array.isArray(res.users) ? res.users : [];
@@ -64,7 +65,7 @@ function AdminPage() {
         const prev = users.find(user => user.userId === userId)?.status;
 
         // 변경중인 유저 표시
-                setupdatingUserId(userId);
+        setupdatingUserId(userId);
         setUsers(list => list.map(user => user.userId === userId ? {
             ...user,
             status: nextStatus
@@ -83,9 +84,20 @@ function AdminPage() {
             setupdatingUserId(null);
         }
     }
-    return(
+
+    const openDetail = (userId: number) => {
+    setSelectedUserId(userId);
+    setDetailOpen(true);
+  };
+
+    const closeDetail = () => {
+    setDetailOpen(false);
+    setSelectedUserId(null);
+  };
+    
+    return (
     <div className="container-fluid py-3">
-    <h1>관리자 페이지 입니다.</h1>
+        <h1>관리자 페이지 입니다.</h1>
         <table className="table table-striped">
             <thead>
             <tr>
@@ -100,25 +112,33 @@ function AdminPage() {
             </thead>
             <tbody>
                 {users.map((user) => (
-                    <tr key={user.userId}>
-                        <td>{user.name}</td>
-                        <td>{user.email}</td>
-                        <td>
-                            <select
-                                value={user.role}
-                                disabled={updatingUserId === user.userId} // 수정 중이면 비활성화
-                                onChange={(e) => onChangeRole(user.userId, e.target.value as Role)}
-                                className="form-select"
+            <tr key={user.userId}>
+            <td>
+                <button
+                  type="button"
+                  className="btn btn-link p-0 text-decoration-none"
+                  onClick={() => openDetail(user.userId)}
+                >
+                  {user.name}
+                </button>
+              </td>
+                <td>{user.email}</td>
+                    <td>
+                        <select
+                            value={user.role}
+                            disabled={updatingUserId === user.userId} // 수정 중이면 비활성화
+                            onChange={(e) => onChangeRole(user.userId, e.target.value as Role)}
+                            className="form-select"
                             >
-                                {roleOptions.map(opt => (
-                                    <option key={opt} value={opt}>{opt}</option>
-                                ))}
-                            </select>
-                    </td>
-                        <td>{formatKST(user.createdAt)}</td>
-                        <td>{formatKST(user.updatedAt)}</td>
-                        <td>{formatKST(user.lastLogin)}</td>
-                        <td>
+                        {roleOptions.map(opt => (
+                            <option key={opt} value={opt}>{opt}</option>
+                        ))}
+                    </select>
+                </td>
+                    <td>{formatKST(user.createdAt)}</td>
+                    <td>{formatKST(user.updatedAt)}</td>
+                    <td>{formatKST(user.lastLogin)}</td>
+                <td>
                   <select
                     value={user.status}
                     disabled={updatingUserId === user.userId}
@@ -137,13 +157,14 @@ function AdminPage() {
                       </option>
                     ))}
                   </select>
-                        </td>
-                    </tr>
+                </td>
+            </tr>
                 ))}
             </tbody>
         </table>
+        <AdminUserDetailModal userId={selectedUserId} open={detailOpen} onClose={closeDetail} />
     </div>
-    );
+    );  
     
 }
 
