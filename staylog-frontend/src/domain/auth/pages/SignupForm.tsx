@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import type { signupConfirmType, signupDirtyType, signupStateType, signupValidType } from "../types/SignupType";
 import sendEmail from "../utils/sendEmail";
 import mailCertify from "../utils/mailCertify";
-import duplicateCheck from "../utils/duplicateCheck";
 import { REGEX_EMAIL, REGEX_LOGIN_ID, REGEX_PASSWORD, REGEX_PHONE } from "../../../global/constants/Validation";
+import duplicateCheck from "../utils/duplicateCheck";
 
 
 function SignupForm() {

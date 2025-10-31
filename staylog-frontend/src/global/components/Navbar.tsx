@@ -1,17 +1,33 @@
 import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import Modal from "./Modal";
 import type { ModalMode } from "../types/ModalMode";
 import NotiCanvas from "../../domain/notification/pages/NotiCanvas";
-import { useSelector } from "react-redux";
+import SearchModal from "../../domain/search/components/SearchModal";
+import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../store/types";
+import { logout } from "../../domain/auth/api";
 
 
 function Navbar() {
+   const dispatch = useDispatch();
+   const navigate = useNavigate();
 
    const nickname = useSelector((state: RootState) => {
 	return state.userInfo?.nickname // 없을 수도 있으니 -> ?.
 })
+   /** 로그아웃 api 호출 (refreshToken만 삭제됨, dispath LOGOUT (localstorage의 AccessToken삭제)로 프론트 상태 초기화 */
+   const handleLogout = async () => {
+    try {
+      await logout(); //  백엔드에서는 refreshToken만 삭제됨
+
+      dispatch({ type: 'LOGOUT' }); // 프론트 상태 초기화 
+
+      navigate('/'); // 홈으로 리다이렉트
+    } catch (err) {
+      console.error('로그아웃 실패:', err);
+    }
+  };
 
    // 모달 활성화 관리 상태값
    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -28,6 +44,19 @@ function Navbar() {
    // 모달창을 닫는 함수 (Modal 컴포넌트로 전달됨)
    function closeModal() {
       setIsModalOpen(false);
+   }
+
+   // 검색 모달 활성화 관리 상태값
+   const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
+
+   // 검색 모달창을 여는 함수
+   function openSearchModal() {
+      setIsSearchModalOpen(true);
+   }
+
+   // 검색 모달창을 닫는 함수
+   function closeSearchModal() {
+      setIsSearchModalOpen(false);
    }
 
 
@@ -58,7 +87,7 @@ function Navbar() {
                   <Link to="/" className="navbar-brand flex-fill fs-3 fw-normal">STAYLOG</Link>
 
                   <form className="d-flex flex-fill" role="search">
-                     <input onClick={() => openModal("search")} className="form-control me-2 shadow-none" placeholder="Search" aria-label="Search" readOnly style={{ cursor: 'pointer' }} />
+                     <input onClick={openSearchModal} className="form-control me-2 shadow-none" placeholder="Search" aria-label="Search" readOnly style={{ cursor: 'pointer' }} />
                   </form>
 
                   <ul className="navbar-nav flex-fill justify-content-center mb-2 mb-lg-0">
@@ -73,14 +102,48 @@ function Navbar() {
                      </li>
                   </ul>
 
-                  
-
                   <ul className="navbar-nav flex-fill justify-content-end mb-2 mb-lg-0 gap-4 align-items-center">
-                     
-                     {nickname && <span>{nickname}</span>}
-                     <li onClick={() => openModal("login")} className="nav-item"><i className="bi bi-person-circle" style={{ fontSize: '32px', cursor: 'pointer' }}></i></li>
-                     <li onClick={() => openNoti()} className="nav-item"><i className="bi bi-bell-fill" style={{ fontSize: '32px', cursor: 'pointer' }}></i></li>
+                  {/* 로그인 상태 */}
+                  {nickname ? (
+                     <>
+                        {/* 닉네임 표시 */}
+                        <span className="fw-semibold">{nickname}</span>
+                        {/* 항상 사람 아이콘은 항상 표시 */}
+                        <li
+                        className="nav-item"
+                        onClick={() => openModal("login")}
+                        style={{ cursor: 'pointer' }}
+                        >
+                        <i className="bi bi-person-circle" style={{ fontSize: '32px' }}></i>
+                        </li>
+
+                        {/* 알림 아이콘 (로그인 시만 표시하기) */}
+                        <li onClick={openNoti} className="nav-item">
+                        <i className="bi bi-bell-fill" style={{ fontSize: '32px', cursor: 'pointer' }}></i>
+                        </li>
+
+                        {/* 로그아웃 버튼 */}
+                        <li className="nav-item">
+                        <button
+                           className="btn btn-outline-dark px-3 py-1"
+                           onClick={handleLogout}
+                         >
+                           LOGOUT
+                        </button>
+                        </li>
+                     </>
+                  ) : (
+                     // 로그인 안 했을 때는 사람 아이콘만 표시
+                     <li
+                        className="nav-item"
+                        onClick={() => openModal("login")}
+                        style={{ cursor: 'pointer' }}
+                     >
+                        <i className="bi bi-person-circle" style={{ fontSize: '32px' }}></i>
+                     </li>
+                     )}
                   </ul>
+
                </div>
             </div>
          </nav>
@@ -90,6 +153,9 @@ function Navbar() {
             onClose={closeModal}
             mode={modalMode} />}
 
+         {isSearchModalOpen && <SearchModal
+            isOpen={isSearchModalOpen}
+            onClose={closeSearchModal} />}
 
          {isNotiOpen && <NotiCanvas
             isOpen={isNotiOpen}
