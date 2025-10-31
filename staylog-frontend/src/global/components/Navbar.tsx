@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import Modal from "./Modal";
 import type { ModalMode } from "../types/ModalMode";
 import NotiCanvas from "../../domain/notification/pages/NotiCanvas";
+import SearchModal from "../../domain/search/components/SearchModal";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../store/types";
 import { logout } from "../../domain/auth/api";
@@ -45,6 +46,19 @@ function Navbar() {
       setIsModalOpen(false);
    }
 
+   // 검색 모달 활성화 관리 상태값
+   const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
+
+   // 검색 모달창을 여는 함수
+   function openSearchModal() {
+      setIsSearchModalOpen(true);
+   }
+
+   // 검색 모달창을 닫는 함수
+   function closeSearchModal() {
+      setIsSearchModalOpen(false);
+   }
+
 
    // 알림창 활성화 관리 상태값
    const [isNotiOpen, setIsNotiOpen] = useState<boolean>(false);
@@ -73,7 +87,7 @@ function Navbar() {
                   <Link to="/" className="navbar-brand flex-fill fs-3 fw-normal">STAYLOG</Link>
 
                   <form className="d-flex flex-fill" role="search">
-                     <input onClick={() => openModal("search")} className="form-control me-2 shadow-none" placeholder="Search" aria-label="Search" readOnly style={{ cursor: 'pointer' }} />
+                     <input onClick={openSearchModal} className="form-control me-2 shadow-none" placeholder="Search" aria-label="Search" readOnly style={{ cursor: 'pointer' }} />
                   </form>
 
                   <ul className="navbar-nav flex-fill justify-content-center mb-2 mb-lg-0">
@@ -139,6 +153,9 @@ function Navbar() {
             onClose={closeModal}
             mode={modalMode} />}
 
+         {isSearchModalOpen && <SearchModal
+            isOpen={isSearchModalOpen}
+            onClose={closeSearchModal} />}
 
          {isNotiOpen && <NotiCanvas
             isOpen={isNotiOpen}
