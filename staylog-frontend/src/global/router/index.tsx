@@ -9,6 +9,7 @@ import { ReservationProvider } from "../../domain/accommodation/hooks/useReserva
 import AdminPage from "../../domain/admin/pages/AdminPage";
 
 
+
 const routes = [
   { path: "/index.html", element: <Home /> }, // spring boot 최초 실행 정보 추가
   { path: "/", element: <Home /> },

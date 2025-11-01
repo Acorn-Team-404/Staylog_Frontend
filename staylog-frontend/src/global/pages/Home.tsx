@@ -15,10 +15,9 @@ function Home() {
   const navigate = useNavigate();
 
   const goToAccommodationDetail = () => {
-    // 숙소 ID 2로 상세 페이지 이동
-    navigate("/accommodations/2");
+    // 숙소 ID 1로 상세 페이지 이동
+    navigate("/accommodations/1");
   };
-
 
   return (
     <>
