@@ -6,7 +6,9 @@ import SignupForm from "../../domain/auth/pages/SignupForm";
 import RoomDetail from "../../domain/accommodation/pages/RoomDetail";
 import AccommodationDetail from "../../domain/accommodation/pages/AccommodationDetail";
 import { ReservationProvider } from "../../domain/accommodation/hooks/useReservation";
+import AdminUserPage from "../../domain/admin/pages/AdminUserPage";
 import AdminPage from "../../domain/admin/pages/AdminPage";
+
 
 
 const routes = [
@@ -17,6 +19,7 @@ const routes = [
   { path: "/room/:roomId", element: <RoomDetail />},
   { path: "/accommodations/:id", element:<AccommodationDetail />},
   { path: "/admin", element: <AdminPage /> },
+  { path: "/admin/users", element: <AdminUserPage /> },
 ];
 
 // router 객체
