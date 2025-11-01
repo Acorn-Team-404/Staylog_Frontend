@@ -5,7 +5,8 @@ import type { AppAction, RootState } from "./types";
 const initState: RootState = {
    userInfo: null,
    token: null,
-   logoutTimer: null
+   logoutTimer: null,
+   commonCodes: null
 };
 
 
@@ -23,6 +24,8 @@ function reducer(state: RootState = initState, action: AppAction): RootState {
          return { ...state, userInfo: action.payload };
       case 'SET_TOKEN':
          return { ...state, token: action.payload };
+      case 'SET_COMMON_CODES':
+         return { ...state, commonCodes: action.payload };
       case 'LOGOUT':
          if (state.logoutTimer) {
             clearTimeout(state.logoutTimer);

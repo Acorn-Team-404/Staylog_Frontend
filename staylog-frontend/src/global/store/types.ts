@@ -1,3 +1,5 @@
+import type { CommonCodeGroupResponse } from '../../domain/common/types';
+
 // 로그인한 유저의 정보 설계도
 export interface UserInfo {
    userId: number;
@@ -12,6 +14,7 @@ export interface RootState {
    userInfo: UserInfo | null;
    logoutTimer: NodeJS.Timeout | null; // 자동 로그아웃 타이머의 ID를 저장
    token: string | null;
+   commonCodes: CommonCodeGroupResponse | null; // 공통코드 전역 상태
 }
 
 // 로그인 시 유저 정보를 store에 저장하는 용도의 액션
@@ -31,5 +34,11 @@ export interface SetTokenAction {
    payload: string | null;
 }
 
+// 공통코드 저장용 액션
+export interface SetCommonCodesAction {
+   type: 'SET_COMMON_CODES';
+   payload: CommonCodeGroupResponse | null;
+}
+
 // 하나로 통합해서 export
-export type AppAction = SetUserInfoAction | LogoutAction | SetTokenAction;
+export type AppAction = SetUserInfoAction | LogoutAction | SetTokenAction | SetCommonCodesAction;
