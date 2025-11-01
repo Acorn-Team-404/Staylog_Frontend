@@ -1,3 +1,5 @@
+// src/domain/admin/pages/AdminAccommodationListPage.tsx
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // useNavigate 훅 임포트
 import api from "../../../global/api";
@@ -22,7 +24,7 @@ const updateAccommodationStatus = async (accommodationId: number, status: 'Y' | 
 };
 
 
-function AdminAccommodationPage() {
+function AdminAccommodationListPage() {
     const [accommodations, setAccommodations] = useState<AdminAccommodationListData[]>([]);
 
     // 전체 숙소 목록 조회 (컴포넌트 마운트 시)
@@ -82,7 +84,6 @@ function AdminAccommodationPage() {
         <div className="container-fluid py-3">
             <h1>숙소 관리 페이지</h1>
 
-
             <table className="table table-striped text-center">
                 <thead>
                     <tr>
@@ -140,4 +141,4 @@ function AdminAccommodationPage() {
     </>;
 }
 
-export default AdminAccommodationPage;
+export default AdminAccommodationListPage;

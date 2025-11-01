@@ -1,11 +1,11 @@
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useState } from "react";
 import api from "../../../global/api";
 import { useNavigate } from "react-router-dom";
 import type { signupConfirmType, signupDirtyType, signupStateType, signupValidType } from "../types/SignupType";
-import { REGEX_EMAIL, REGEX_LOGIN_ID, REGEX_PASSWORD, REGEX_PHONE } from "../../../global/constants/validation";
-import duplicateCheck from "../utils/DuplicateCheck";
 import sendEmail from "../utils/sendEmail";
 import mailCertify from "../utils/mailCertify";
+import { REGEX_EMAIL, REGEX_LOGIN_ID, REGEX_PASSWORD, REGEX_PHONE } from "../../../global/constants/Validation";
+import duplicateCheck from "../utils/duplicateCheck";
 
 
 function SignupForm() {
@@ -58,6 +58,8 @@ function SignupForm() {
 
    // 메일 발송 여부 상태값
    const [mailSend, setMailSend] = useState<boolean>(false)
+
+   const [mailCodeTimer, setMailCodeTimer] = useState<number>(600);
 
 
    // 입력값 변경 및 dirty/valid 업데이트 함수
@@ -153,6 +155,11 @@ function SignupForm() {
    // 인증 메일 발송
    async function handleEmailSend() {
 
+      setConfirm(prev => ({
+         ...prev,
+         email: false
+      }))
+
       let isSend = await sendEmail({
          email: inputState.email,
          valid: valid.email
@@ -161,13 +168,41 @@ function SignupForm() {
       if (isSend) {
          setMailSend(isSend)
 
-         setConfirm(prev => ({
-            ...prev,
-            email: isSend
-         }));
+         // setConfirm(prev => ({
+         //    ...prev,
+         //    email: isSend
+         // }));
       }
 
    }
+
+
+   useEffect(() => {
+      let timerId: NodeJS.Timeout | null = null;
+
+      if (mailSend && !confirm.email) {
+         setMailCodeTimer(180);
+
+         timerId = setInterval(() => {
+            setMailCodeTimer(prev => {
+               if (prev <= 1) {
+                  clearInterval(timerId!); // 0초가 되면 타이머 중지
+                  setMailSend(false);      // 시간이 만료되면 메일 발송 상태도 초기화
+                  return 0;                // 0으로 설정
+               }
+               return prev - 1;
+            });
+         }, 1000);
+      }
+
+      return () => {
+         if (timerId) {
+            clearInterval(timerId);
+         }
+      };
+   }, [mailSend, confirm.email])
+
+
 
 
 
@@ -181,6 +216,11 @@ function SignupForm() {
          ...prev,
          email: isCertify
       }));
+
+      setInputState(prev => ({
+         ...prev,
+         code: ""
+      }))
    }
 
 
@@ -286,20 +326,23 @@ function SignupForm() {
                <div className="mb-3">
                   <label htmlFor="email" className="form-label fw-bold">이메일</label>
                   <div className="d-flex">
-                     <input type="email" onChange={handleChange} className="form-control me-2" name="email" id="email" value={inputState.email} placeholder="이메일을 입력하세요." />
+                     <input type="email" onChange={handleChange} className="form-control me-2" name="email" id="email" value={inputState.email} placeholder="이메일을 입력하세요." readOnly={confirm.email} />
                      <button onClick={handleEmailSend} name="email" type="button" className="btn btn-outline-secondary flex-shrink-0">인증요청</button>
                   </div>
                   {dirty.email &&
                      (!valid.email &&
                         <p className="form-text text-danger mt-1">이메일 형식으로 입력해주세요</p>
                      )}
-                  {mailSend && (
+                  {mailSend && !confirm.email && (
                      <>
-                        <input onChange={handleChange} type="text" className="form-control me-2" name="code" id="code" value={inputState.code} placeholder="인증코드를 입력하세요." />
-                        <button onClick={mailCodeCheck} type="button" className="btn btn-outline-primary flex-shrink-0">인증확인</button>
+                        <div className="d-flex">
+                           <input onChange={handleChange} type="text" className="form-control me-2 mt-2" name="code" id="code" value={inputState.code} placeholder="인증코드를 입력하세요." />
+                           <button onClick={mailCodeCheck} name="code" type="button" className="btn btn-outline-primary flex-shrink-0 mt-2">인증확인</button>
+                        </div>
                      </>
                   )}
-
+                  {mailSend && !confirm.email && <p className="form-text text-danger mt-1 fw-semibold">유효 시간: {mailCodeTimer}초</p>}
+                  {mailSend && confirm.email && <p className="form-text text-success mt-1 fw-semibold">인증 완료</p>}
                </div>
 
 

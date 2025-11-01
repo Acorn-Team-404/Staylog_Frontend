@@ -15,10 +15,9 @@ function Home() {
   const navigate = useNavigate();
 
   const goToAccommodationDetail = () => {
-    // 숙소 ID 2로 상세 페이지 이동
-    navigate("/accommodations/2");
+    // 숙소 ID 1로 상세 페이지 이동
+    navigate("/accommodations/1");
   };
-
 
   return (
     <>
@@ -27,6 +26,7 @@ function Home() {
       <button onClick={goToAccommodationDetail}>
         숙소 상세 페이지 테스트 (ID:2)
       </button>
+      <button onClick={()=>navigate("/admin")}>관리자 페이지</button>
     </>
   );
 }
