@@ -17,6 +17,7 @@ import AdminAccommodationListPage from "../../domain/admin/pages/AdminAccommodat
 import AdminRoomListPage from "../../domain/admin/pages/AdminRoomListPage";
 
 
+
 const routes = [
   { path: "/index.html", element: <Home /> }, // spring boot 최초 실행 정보 추가
   { path: "/", element: <Home /> },
