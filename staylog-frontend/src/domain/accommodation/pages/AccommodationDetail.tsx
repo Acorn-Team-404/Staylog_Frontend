@@ -7,7 +7,6 @@ import api from '../../../global/api';
 import axios from 'axios';
 import RoomList from '../components/RoomList';
 import ReviewList from '../components/ReviewList';
-import ReservationForm from './ReservationForm';
 import '../css/Accommodation.css';
 /*
     Carousel : 숙소 대표 이미지
@@ -270,11 +269,7 @@ function AccommodationDetail() {
                     <Col lg={4}>
                         <div className="right sticky-top pt-lg-0 pt-4">
                             {/* ReservationForm으로 선택된 객실 ID/정보 전달 */}
-                            <ReservationForm 
-                                accommodationId={data.accommodationId!} 
-                                rooms={data.rooms} 
-                                selectedRoomId={selectedRoom?.roomId}
-                            />
+                            
                         </div>
                     </Col>
                 </Row>
