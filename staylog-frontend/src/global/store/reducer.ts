@@ -28,7 +28,6 @@ function reducer(state: RootState = initState, action: AppAction): RootState {
             clearTimeout(state.logoutTimer);
          }
          localStorage.removeItem("token");
-         localStorage.removeItem("userInfo");
          return { ...initState };
       default:
          return state;

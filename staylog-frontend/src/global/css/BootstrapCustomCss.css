@@ -1,0 +1,51 @@
+/*
+	BootStrap 확장 커스텀 클래스
+	BootStrap에 없는 값은 여기에서 정의하고 import해서 사용하세요
+*/
+
+
+/* 더 작은 폰트사이즈 */
+.fs-7{
+	font-size: 14px;
+}
+.fs-8{
+	font-size: 13px;
+}
+.fs-9{
+	font-size: 12px;
+}
+.fs-10{
+	font-size: 11px;
+}
+.fs-11{
+	font-size: 10px;
+}
+
+
+.me-6 { margin-right: 4rem !important; }   /* 64px */
+.me-7 { margin-right: 5rem !important; }   /* 80px */
+.me-8 { margin-right: 6rem !important; }   /* 96px */
+.me-9 { margin-right: 7rem !important; }   /* 112px */
+.me-10 { margin-right: 8rem !important; }  /* 128px */
+
+
+.text-semiblack{
+	color: rgb(76, 76, 76);
+}
+
+.bg-semired{
+	background-color: rgb(255, 116, 116);
+}
+
+.text-semired{
+	color: rgb(255, 116, 116);
+}
+
+.text-hover-dark:hover {
+  color: #212529 !important; /* Bootstrap의 text-dark */
+}
+
+
+.cursor-pointer {
+	cursor: pointer
+}
