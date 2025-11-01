@@ -20,7 +20,7 @@ export const statusOptions: MemberStatus[] = ["ACTIVE", "INACTIVE", "WITHDRAWN"]
 // ✅ 상세조회 DTO (목록 + 추가 필드들)
 export type AdminUserDetailDto = AdminUserDto & {
   phone?: string | null;
-  gender?: "M" | "F" | "U" | null;
+  gender?: "M" | "F" | null;
   birthDate?: string | null;
   profileImageUrl?: string | null;
   withdrawnAt?: string | null;
