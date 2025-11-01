@@ -14,6 +14,7 @@ import AccommodationDetail from "../../domain/accommodation/pages/AccommodationD
 import Journal from "../../domain/board/pages/Journal";
 import Review from "../../domain/board/pages/Review";
 import BoardForm from "../../domain/board/pages/BoardForm";
+import AccommodationListPage from "../../domain/accommodation/pages/AccommodationListPage";
 
 
 // routes 배열: 중첩되지 않는 최상위 경로만 포함 (Admin 라우트 객체는 분리)
