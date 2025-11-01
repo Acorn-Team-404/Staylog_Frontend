@@ -176,13 +176,7 @@ function SignupForm() {
 
       if (isSend) {
          setMailSend(isSend)
-
-         // setConfirm(prev => ({
-         //    ...prev,
-         //    email: isSend
-         // }));
       }
-
    }
 
 

@@ -50,5 +50,6 @@ export interface NotificationCardState {
  */
 export interface NotificationCardProps extends NotificationCardState {
   handleDelete: (notiId: number) => void
+  handleRead: (notiId: number) => void
 }
 

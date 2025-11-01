@@ -15,7 +15,7 @@ import type { NotificationCardProps } from '../types/NotificationCardType';
  * @param timeAgo 알림 생성일로부터 얼마나 지났는지
  * @param isRead 알림 읽음 여부
  */
-function NotificationCard({ notiId, imageUrl, date, title, typeName, message, timeAgo, isRead, handleDelete }: NotificationCardProps) {
+function NotificationCard({ notiId, imageUrl, date, title, typeName, message, timeAgo, isRead, handleDelete, handleRead }: NotificationCardProps) {
 
   // 알림 카드에 마우스가 올라갔는지 여부 (delete 버튼을 활성화시킬 용도)
   const [mouseOver, setMouseOver] = useState(false);
@@ -36,7 +36,7 @@ function NotificationCard({ notiId, imageUrl, date, title, typeName, message, ti
 
   return (
     <>
-      <Card onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseReave} style={{ width: '90%', borderRadius: '10px 45px 10px 10px' }} className="mx-auto position-relative bg-secondary-subtle border-0 shadow-sm cursor-pointer mb-4">
+      <Card onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseReave} onClick={() => {handleRead(notiId)}} style={{ width: '90%', borderRadius: '10px 45px 10px 10px' }} className="mx-auto position-relative bg-secondary-subtle border-0 shadow-sm cursor-pointer mb-4">
         {isRead &&
           <span className="position-absolute" style={{ top: '2px', right: '2px', width: '10px', height: '10px', backgroundColor: '#ee6f6fff', borderRadius: '50%', opacity: (!mouseOver && isRead == 'N') ? 1 : 0, transition: 'opacity 0.2s ease-in-out', pointerEvents: 'none' }} />
         }

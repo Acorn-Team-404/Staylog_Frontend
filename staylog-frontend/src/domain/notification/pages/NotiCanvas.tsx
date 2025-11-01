@@ -82,11 +82,18 @@ function NotiCanvas({ isOpen, onClose }: NotiCanvasProps) {
 
    // 알림 읽음 처리
    async function handleRead(notiId: number) {
+      
       try {
-         await api.patch("/v1/notification/read", {notiId: notiId})
-         
-         // TODO 상태값 변경 필요
-      } catch(err) {
+         await api.patch("/v1/notification/read", { "notiId": notiId })
+
+         // 상태값에 반영하여 화면 렌더링
+         setNotiList((prevNotiList) =>
+            prevNotiList.map((noti) =>
+               noti.notiId === notiId ? { ...noti, isRead: 'Y' } : noti
+            )
+         );
+
+      } catch (err) {
          console.log(err);
       }
    }
@@ -104,7 +111,7 @@ function NotiCanvas({ isOpen, onClose }: NotiCanvasProps) {
                notiList.length > 0
                   ? (
                      notiList.map((noti) => (
-                        <NotificationCard key={noti.notiId} {...noti} handleDelete={() => handleDelete(noti.notiId)} />
+                        <NotificationCard key={noti.notiId} {...noti} handleDelete={() => handleDelete(noti.notiId)} handleRead={() => { handleRead(noti.notiId) }} />
                      ))
                   )
                   : ("")
