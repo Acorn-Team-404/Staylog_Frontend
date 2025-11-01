@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Container, Row, Col, Button, Spinner, Alert } from 'react-bootstrap';
 import AccommodationCard from '../components/AccommodationCard';
@@ -7,17 +7,32 @@ import type { SortOption } from '../../../global/components/SortModal';
 import { searchAccommodations } from '../../search/api';
 import type { AccommodationListItem } from '../types';
 import type { SearchAccommodationsRequest } from '../../search/types';
-
-// 정렬 옵션
-const SORT_OPTIONS: SortOption<'popular' | 'new' | 'lowPrice' | 'highPrice'>[] = [
-  { value: 'popular', label: '인기순' },
-  { value: 'new', label: '신규 오픈순' },
-  { value: 'lowPrice', label: '낮은 가격순' },
-  { value: 'highPrice', label: '높은 가격순' },
-];
+import useCommonCodeSelector from '../../common/hooks/useCommonCodeSelector';
 
 function AccommodationListPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+
+  // 공통코드에서 정렬 옵션 가져오기
+  const sortCodeList = useCommonCodeSelector('sortOptions');
+
+  // 공통코드를 SortOption 형태로 변환
+  const SORT_OPTIONS: SortOption<'popular' | 'new' | 'lowPrice' | 'highPrice'>[] = useMemo(() => {
+    if (!sortCodeList || sortCodeList.length === 0) {
+      // Fallback: 공통코드 로딩 전 기본값
+      return [
+        { value: 'popular', label: '인기순' },
+        { value: 'new', label: '신규 오픈순' },
+        { value: 'lowPrice', label: '낮은 가격순' },
+        { value: 'highPrice', label: '높은 가격순' },
+      ];
+    }
+
+    // 공통코드의 codeId를 value로, codeName을 label로 사용
+    return sortCodeList.map((code) => ({
+      value: code.codeId as 'popular' | 'new' | 'lowPrice' | 'highPrice',
+      label: code.codeName,
+    }));
+  }, [sortCodeList]);
 
   // 상태
   const [accommodations, setAccommodations] = useState<AccommodationListItem[]>([]);

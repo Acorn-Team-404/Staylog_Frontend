@@ -35,6 +35,7 @@ export interface CommonCodeGroupResponse {
   imageTypes: CommonCodeDto[];           // 이미지 타입
   userRoles: CommonCodeDto[];            // 사용자 권한
   userStatus: CommonCodeDto[];           // 사용자 상태
+  sortOptions: CommonCodeDto[];          // 정렬 옵션
 }
 
 /**

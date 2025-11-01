@@ -32,6 +32,7 @@ function useCommonCodeSelector(group: 'boardTypes'): CommonCodeDto[];
 function useCommonCodeSelector(group: 'imageTypes'): CommonCodeDto[];
 function useCommonCodeSelector(group: 'userRoles'): CommonCodeDto[];
 function useCommonCodeSelector(group: 'userStatus'): CommonCodeDto[];
+function useCommonCodeSelector(group: 'sortOptions'): CommonCodeDto[];
 function useCommonCodeSelector(group?: keyof NonNullable<RootState['commonCodes']>) {
   const commonCodes = useSelector((state: RootState) => state.commonCodes);
 
