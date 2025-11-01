@@ -1,6 +1,6 @@
 // src/components/ToastEditor.jsx
 import '@toast-ui/editor/dist/toastui-editor.css';
-import Editor from '@toast-ui/editor';
+//import Editor from '@toast-ui/editor';
 import { useEffect, useRef } from 'react';
 
 export default function ToastEditor({ value = '', height='400px', onChange }) {
