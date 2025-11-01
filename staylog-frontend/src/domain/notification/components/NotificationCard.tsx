@@ -42,7 +42,7 @@ function NotificationCard({ notiId, imageUrl, date, title, typeName, message, ti
         <CloseButton onClick={() => handleDelete(notiId)} aria-label="알림 닫기" style={{ position: 'absolute', top: '2px', right: '2px', fontSize: '0.5rem', opacity: mouseOver ? 1 : 0, pointerEvents: mouseOver ? 'auto' : 'none' }} />
 
         <Card.Body className="d-flex align-items-center p-3">
-          <Image src="https://picsum.photos/id/237/200/300" style={{ width: '85px', height: '85px', objectFit: 'cover', }} className="rounded-3" />
+          <Image src={imageUrl} style={{ width: '85px', height: '85px', objectFit: 'cover', }} className="rounded-3" />
           <div className="flex-grow-1">
             <Card.Text as="small" className="text-muted mb-1 d-block ms-3 fs-8">{date}</Card.Text>
             <div className="d-flex justify-content-between align-items-baseline mb-1">

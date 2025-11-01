@@ -10,28 +10,27 @@ import Journal from "../../domain/board/pages/Journal";
 import Review from "../../domain/board/pages/Review";
 
 import AccommodationListPage from "../../domain/accommodation/pages/AccommodationListPage";
-import { ReservationProvider } from "../../domain/accommodation/hooks/useReservation";
+//import { ReservationProvider } from "../../domain/accommodation/hooks/useReservation";
 import AdminPage from "../../domain/admin/pages/AdminPage";
 import BoardForm from "../../domain/board/pages/BoardForm";
-
+import AdminAccommodationListPage from "../../domain/admin/pages/AdminAccommodationListPage";
+import AdminRoomListPage from "../../domain/admin/pages/AdminRoomListPage";
 
 
 const routes = [
   { path: "/index.html", element: <Home /> }, // spring boot 최초 실행 정보 추가
   { path: "/", element: <Home /> },
   { path: "/login", element: <LoginForm /> },
-
   { path: "/review", element: <Review /> },
   { path: "/journal", element: <Journal /> },
   { path: "/boardForm", element: <BoardForm /> },
-
-
   { path: "/signup", element: <SignupForm /> },
   { path: "/accommodations", element: <AccommodationListPage /> }, // 숙소 리스트 페이지
   { path: "/accommodations/:id", element:<AccommodationDetail />},
   { path: "/room/:roomId", element: <RoomDetail />},
   { path: "/admin", element: <AdminPage /> },
-
+  { path: "/admin/accommodations", element: <AdminAccommodationListPage /> },
+  { path: "/admin/accommodations/:accommodationId/rooms", element: <AdminRoomListPage /> }
 ];
 
 // router 객체

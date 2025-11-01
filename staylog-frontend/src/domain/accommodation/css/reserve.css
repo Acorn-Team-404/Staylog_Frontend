@@ -1,0 +1,9 @@
+.reserve-bubble {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  border-radius: 9999px;
+  padding: 12px 18px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+  z-index: 1050; /* Offcanvas보다 낮게, 일반 요소보다 높게 */
+}
