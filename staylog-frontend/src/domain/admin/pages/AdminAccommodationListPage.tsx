@@ -1,3 +1,5 @@
+// src/domain/admin/pages/AdminAccommodationListPage.tsx
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // useNavigate 훅 임포트
 import api from "../../../global/api";
@@ -8,9 +10,9 @@ import { formatKST } from "../../../global/utils/date";
 const updateAccommodationStatus = async (accommodationId: number, status: 'Y' | 'N') => {
     // 'Y' (대기) -> 복원 API 호출
     const changeStatus = status === 'N'
-        ? `/api/admin/accommodations/${accommodationId}/restore`
+        ? `/v1/admin/accommodations/${accommodationId}/restore`
         // 'N' (활성) -> 삭제 API 호출
-        : `/api/admin/accommodations/${accommodationId}/delete`;
+        : `/v1/admin/accommodations/${accommodationId}/delete`;
 
     try {
         await api.patch(changeStatus, null);
@@ -27,7 +29,7 @@ function AdminAccommodationListPage() {
 
     // 전체 숙소 목록 조회 (컴포넌트 마운트 시)
     useEffect(() => {
-        api.get<AdminAccommodationListData[]>("/api/admin/accommodations")
+        api.get<AdminAccommodationListData[]>("/v1/admin/accommodations")
             .then(res => setAccommodations(res))
             .catch(err => console.log("숙소 목록 로드 실패", err));
     }, []);
@@ -81,7 +83,6 @@ function AdminAccommodationListPage() {
     return <>
         <div className="container-fluid py-3">
             <h1>숙소 관리 페이지</h1>
-
 
             <table className="table table-striped text-center">
                 <thead>

@@ -1,3 +1,5 @@
+// src/domain/admin/pages/AdminRoomListPage.tsx
+
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"; // useNavigate 훅 임포트
 import api from "../../../global/api";
@@ -8,15 +10,15 @@ import type { AdminRoomListData } from "../types/AdminRoomTypes";
 const updateAccommodationStatus = async (accommodationId: number, roomId: number, status: 'Y' | 'N') => {
     // 'Y' (대기) -> 복원 API 호출
     const changeStatus = status === 'N'
-        ? `/api/admin/accommodations/${accommodationId}/rooms/${roomId}/restore`
+        ? `/v1/admin/accommodations/${accommodationId}/rooms/${roomId}/restore`
         // 'N' (활성) -> 삭제 API 호출
-        : `/api/admin/accommodations/${accommodationId}/rooms/${roomId}/delete`;
+        : `/v1/admin/accommodations/${accommodationId}/rooms/${roomId}/delete`;
 
     try {
         await api.patch(changeStatus, null);
         return true;
     } catch (err) {
-        console.log(`숙소 ID ${roomId} 상태 업데이트 실패:`, err);
+        console.log(`객실 ID ${roomId} 상태 업데이트 실패:`, err);
         return false;
     }
 };
@@ -32,9 +34,9 @@ function AdminRoomListPage() {
 
     // 전체 숙소 목록 조회 (컴포넌트 마운트 시)
     useEffect(() => {
-        api.get<AdminRoomListData[]>(`/api/admin/accommodations/${accommodationId}/rooms`)
+        api.get<AdminRoomListData[]>(`/v1/admin/accommodations/${accommodationId}/rooms`)
             .then(res => setRooms(res))
-            .catch(err => console.log("숙소 목록 로드 실패", err));
+            .catch(err => console.log("객실 목록 로드 실패", err));
     }, [accommodationId]);
 
     // 상태 변경 API 호출 핸들러 (원래 값 롤백 기능 포함)
@@ -87,17 +89,17 @@ function AdminRoomListPage() {
                 <thead>
                     <tr>
                         <th style={{ width: '5%' }}>번호</th>
-                        <th>숙소명</th>
+                        <th>객실명</th>
                         <th style={{ width: '10%' }}>유형</th>
                         <th style={{ width: '10%' }}>가격</th>
-                        <th style={{ width: '10%' }}>최대 인원</th>
+                        <th style={{ width: '15%' }}>최대 인원(성인)</th>
                         <th style={{ width: '15%' }}>등록일</th>
                         <th style={{ width: '10%' }}>상태</th>
                         <th style={{ width: '10%' }}>상세?</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {rooms.length === 0 ? ( // 숙소가 하나도 없을 때
+                    {rooms.length === 0 ? ( // 객실이 하나도 없을 때
                         <tr>
                             <td colSpan={7} className="text-center py-5">
                                 <div className="text-muted">
@@ -107,7 +109,7 @@ function AdminRoomListPage() {
                             </td>
                         </tr>
                     ) : (
-                        rooms.map((item, index) => ( // 숙소가 있을 때
+                        rooms.map((item, index) => ( // 객실이 있을 때
                             <tr key={item.roomId}>
                                 <td>{index + 1}</td>
                                 <td>{item.name}</td>
