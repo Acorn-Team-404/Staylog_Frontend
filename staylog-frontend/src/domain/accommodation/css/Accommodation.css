@@ -1,0 +1,65 @@
+/* CustomNav.css (예시) */
+.menuTab {
+    display : flex;
+    justify-content : space-between; /* 탭 넓게 펼치기 */
+    border-bottom : 1px solid #ccc;
+    padding-bottom : 10px;
+    margin-bottom : 40px; /* 간격 */
+    cursor : pointer;
+    font-size : 1.1rem;
+    font-weight : 500;
+}
+
+
+.menuTab .navItem {
+    flex-grow : 1;
+    text-align : center;
+    position : relative;
+    padding : 5px 0;
+    color : #141414; /* 비활성화된 색상 */
+    transition : color 0.3s;
+}
+
+/*탭에 커서를 가져갔을 때*/
+.menuTab .navItem:hover {
+    color : #6c6c6c;
+}
+
+/* 선택된 메뉴 탭 */
+.menuTab .navItem.active {
+    color : #5391ca;;
+    font-weight : 700;
+    /* 밑줄 효과 */
+    border-bottom : 3px solid #5391ca;;
+    margin-bottom : -11px; /* border-bottom을 탭 라인 위에 표시하기 위해 조정 */
+}
+
+/* 안내 사항 아코디언 */
+.customAccordion .accordion-item {
+    border : none; /* 테투리 제거 */
+    border-bottom : 1px solid #ddd;
+}
+
+/* 아코디언 버튼 스타일 */
+.customAccordion .accordion-button {
+    background : transparent;  /* 배경색 제거 */
+    box-shadow : none;         /* 클릭 시 생기는 그림자 제거 */
+    font-weight : 500;         /* 글씨 약간 굵게 */
+    padding : 1rem 0;          /* 위아래 여백만 남겨서 넓게 보이게 */
+    font-weight : 400;
+    font-size : 1.2rem;
+}
+
+/* 아코디언이 열렸을 때 */
+.customAccordion .accordion-button:not(.collapsed) {
+    color : #000;              /* 텍스트 색 진하게 */
+    background : transparent;  /* 배경 그대로 투명 유지 */
+    font-weight : 700;
+}
+
+/* 아코디언 본문 내용 */
+.customAccordion .accordion-body {
+    padding : 1rem 0 1rem;   /* 위쪽 살짝, 아래쪽 넉넉한 여백 */
+    color : #282828;              /* 본문 글씨 색 살짝 흐린 검정 */
+    font-size : 0.97rem;       /* 글씨 크기 약간 작게 */
+}

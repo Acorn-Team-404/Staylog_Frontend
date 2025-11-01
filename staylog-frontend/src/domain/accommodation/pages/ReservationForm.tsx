@@ -1,6 +1,7 @@
 // src/domain/accommodation/components/ReservationForm.tsx
 import React, { useState } from "react";
 import type { RoomList } from "../types/accommodation";
+import BookingCalendar from "../components/BookingCalendar";
 
 interface ReservationFormProps {
   accommodationId: number;
@@ -42,6 +43,10 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
     console.log(`숙소 ${accommodationId} 예약 시도: 객실ID: ${roomId}, 날짜: ${date}, 인원: ${guests}`);
   };
 
+  const handleRangeSelect = (checkIn: string, checkOut: string) => {
+    console.log("체크인:", checkIn, "체크아웃:", checkOut);
+  };
+
   return (
     <div style={{ padding: 0 }}>
       <h3 style={{ marginBottom: '20px', fontSize: '1.3em' }}>예약 정보 입력</h3>
@@ -67,12 +72,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
         {/* 날짜 선택 */}
         <label style={{ display: 'block', marginBottom: '10px' }}>
           날짜 선택:
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            style={{ marginLeft: '10px', padding: '5px' }}
-          />
+          <BookingCalendar accommodationId={3} onSelectRange={handleRangeSelect} />
         </label>
 
         {/* 인원 선택 */}
@@ -88,12 +88,11 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
         </label>
       </div>
 
-      <button
+      <button className="btn btn-success"
         onClick={handleReserve}
         style={{
           width: '100%',
           padding: '18px',
-          backgroundColor: '#FF5A5F',
           border: 'none',
           color: 'white',
           fontSize: '1.1em',

@@ -74,8 +74,7 @@ function LoginForm({ onClose }: LoginFormProps = {}) {
       
       // API 응답에서 토큰과 유저 정보 추출
       console.log(loginResponse)
-      
-
+        
       const fullToken = `${loginResponse.tokenType} ${loginResponse.accessToken}`;
       const user: UserInfo = loginResponse.user;
 

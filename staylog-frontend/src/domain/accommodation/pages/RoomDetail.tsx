@@ -24,7 +24,7 @@ function RoomDetail() {
     }
     api.get<RoomDetailDto>(`/v1/room/${roomId}`)
       .then(res => {
-        setRoomDetail(res.data)
+        setRoomDetail(res)
         setError(null)
       })
       .catch(err => console.error(err))

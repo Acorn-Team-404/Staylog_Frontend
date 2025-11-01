@@ -1,6 +1,17 @@
 // src/domain/accommodation/types/accommodation.ts
 
-export interface RoomList {
+export interface AccommodationReviewList {
+    readonly boardId : number;
+    readonly userId : number;
+    nickname : string;
+    profileImage : string;
+    content : string;
+    rating : number;
+    reviewCount : number;
+    createdAt : string;
+
+}
+export interface AccommodationRoomList {
     readonly roomId : number;
     name : string;
     maxGuest : number;
@@ -24,7 +35,8 @@ export interface AccommodationDetail {
     updatedAt : string | null;
     checkInTime : string;
     checkOutTime : string;
-    rooms?: RoomList[]; 
+    rooms? : AccommodationRoomList[];
+    reviews? : AccommodationReviewList[]; 
 
     // 다음 개발 단계에서 추가될 필드 (주석 처리)
     // averageRating?: number;
