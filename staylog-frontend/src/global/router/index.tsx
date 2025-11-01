@@ -8,6 +8,8 @@ import AccommodationDetail from "../../domain/accommodation/pages/AccommodationD
 import AccommodationListPage from "../../domain/accommodation/pages/AccommodationListPage";
 import { ReservationProvider } from "../../domain/accommodation/hooks/useReservation";
 import AdminPage from "../../domain/admin/pages/AdminPage";
+import AdminAccommodationListPage from "../../domain/admin/pages/AdminAccommodationListPage";
+import AdminRoomListPage from "../../domain/admin/pages/AdminRoomListPage";
 
 
 const routes = [
@@ -19,6 +21,8 @@ const routes = [
   { path: "/accommodations/:id", element:<AccommodationDetail />},
   { path: "/room/:roomId", element: <RoomDetail />},
   { path: "/admin", element: <AdminPage /> },
+  { path: "/admin/accommodations", element: <AdminAccommodationListPage /> },
+  { path: "/admin/accommodations/:accommodationId/rooms", element: <AdminRoomListPage /> }
 ];
 
 // router 객체

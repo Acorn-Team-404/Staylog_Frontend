@@ -6,7 +6,7 @@ import type { NotificationCardState, responseNotification } from '../types/Notif
 import useGetLoginIdFromToken from '../../auth/hooks/useGetLoginIdFromToken';
 import api from '../../../global/api';
 import useGetUserIdFromToken from '../../auth/hooks/useGetUserIdFromToken';
-import notificationFormatter from '../utils/NotificationFormatter';
+import notificationFormatter from '../utils/notificationFormatter';
 
 export interface NotiCanvasProps {
    isOpen: boolean;
@@ -30,19 +30,19 @@ function NotiCanvas({ isOpen, onClose }: NotiCanvasProps) {
 
 
 
-
+   // 알림 리스트 요청
    useEffect(() => {
       (async () => {
          if (!userId) {
             return
          }
          try {
-            const response = await api.get(`/v1/notification/${userId}`)
+            const response: responseNotification[] = await api.get(`/v1/notification/${userId}`)
 
-            const rawDataList: responseNotification[] = response
+            // 알림 리스트에 업데이트할 변수
+            const processedList: NotificationCardState[] = response.map((rawItem) => {
 
-            const processedList: NotificationCardState[] = rawDataList.map((rawItem) => {
-
+               // JSON 파싱 후 알림 카드에서 사용할 수 있는 데이터로 가공
                let details: any = {};
                try {
                   details = JSON.parse(rawItem.details)
@@ -52,8 +52,8 @@ function NotiCanvas({ isOpen, onClose }: NotiCanvasProps) {
                return notificationFormatter({ rawItem, details });
             })
 
+            // 완성된 데이터로 상태값 변경
             setNotiList(processedList)
-
 
          } catch (err) {
             console.log(err);
@@ -66,7 +66,12 @@ function NotiCanvas({ isOpen, onClose }: NotiCanvasProps) {
    async function handleDelete(notiId: number) {
       if (confirm("알림을 삭제하시겠습니까?")) {
          try {
-            // TODO: 삭제 로직 구현
+            await api.delete(`/v1/notification/${notiId}/delete`)
+
+            // 상태값에 반영하여 화면 렌더링
+            setNotiList((prevNotiList) =>
+               prevNotiList.filter((noti) => noti.notiId !== notiId)
+            );
          } catch (err) {
             console.log(err);
          }
