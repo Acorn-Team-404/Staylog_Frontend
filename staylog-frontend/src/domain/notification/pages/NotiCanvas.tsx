@@ -78,9 +78,20 @@ function NotiCanvas({ isOpen, onClose }: NotiCanvasProps) {
       } else {
          return
       }
-
-
    }
+
+   // 알림 읽음 처리
+   async function handleRead(notiId: number) {
+      try {
+         await api.patch("/v1/notification/read", {notiId: notiId})
+         
+         // TODO 상태값 변경 필요
+      } catch(err) {
+         console.log(err);
+      }
+   }
+
+
 
    return (
       <Offcanvas show={isOpen} onHide={onClose} placement="end" scroll={true} style={{ "--bs-offcanvas-width": "450px" } as React.CSSProperties} id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">

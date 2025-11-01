@@ -37,8 +37,9 @@ function NotificationCard({ notiId, imageUrl, date, title, typeName, message, ti
   return (
     <>
       <Card onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseReave} style={{ width: '90%', borderRadius: '10px 45px 10px 10px' }} className="mx-auto position-relative bg-secondary-subtle border-0 shadow-sm cursor-pointer mb-4">
-
-        <span className="position-absolute" style={{ top: '2px', right: '2px', width: '10px', height: '10px', backgroundColor: '#ee6f6fff', borderRadius: '50%', opacity: (!mouseOver && isRead == 'N') ? 1 : 0, transition: 'opacity 0.2s ease-in-out', pointerEvents: 'none' }} />
+        {isRead &&
+          <span className="position-absolute" style={{ top: '2px', right: '2px', width: '10px', height: '10px', backgroundColor: '#ee6f6fff', borderRadius: '50%', opacity: (!mouseOver && isRead == 'N') ? 1 : 0, transition: 'opacity 0.2s ease-in-out', pointerEvents: 'none' }} />
+        }
         <CloseButton onClick={() => handleDelete(notiId)} aria-label="알림 닫기" style={{ position: 'absolute', top: '2px', right: '2px', fontSize: '0.5rem', opacity: mouseOver ? 1 : 0, pointerEvents: mouseOver ? 'auto' : 'none' }} />
 
         <Card.Body className="d-flex align-items-center p-3">

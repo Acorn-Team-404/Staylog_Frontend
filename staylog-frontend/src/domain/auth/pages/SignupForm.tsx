@@ -59,7 +59,8 @@ function SignupForm() {
    // 메일 발송 여부 상태값
    const [mailSend, setMailSend] = useState<boolean>(false)
 
-   const [mailCodeTimer, setMailCodeTimer] = useState<number>(600);
+   // 메일 유효시간 상태값
+   const [mailCodeTimer, setMailCodeTimer] = useState<number>(180);
 
 
    // 입력값 변경 및 dirty/valid 업데이트 함수
@@ -73,6 +74,12 @@ function SignupForm() {
          ...prev,
          [name]: true
       }))
+
+      // confirm 상태 업데이트
+      setConfirm(prev => ({
+         ...prev,
+         [name]: false 
+      }));
 
       // 정규표현식을 사용한 유효성 검사
       let isValid = false;
@@ -102,7 +109,9 @@ function SignupForm() {
       }
 
       // valid 상태 업데이트
-      setValid(prev => ({ ...prev, [name]: isValid }));
+      setValid(prev => ({ ...prev,
+         [name]: isValid 
+      }));
    }
 
 
