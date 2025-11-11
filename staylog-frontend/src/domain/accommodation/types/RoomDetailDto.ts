@@ -20,5 +20,6 @@ export interface RoomDetailDto {
   checkInTime: string;
   checkOutTime: string;
   description: string;
+  imageUrl?: string;
 }
 

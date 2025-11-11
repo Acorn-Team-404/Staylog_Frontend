@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 import Comments from "../../domain/board/components/comment/Comments";
+import ImageCarousel from "../components/ImageCarousel";
 // import ImageUploader from "../components/ImageUploader"; // ImageUploader moved to TestForm
 
 
@@ -31,6 +32,19 @@ function Home() {
 
   return (
     <>
+    <div className="container">
+      <ImageCarousel
+        targetType="HOME"
+        targetId={1}
+        indicatorType="progressbar"
+        aspectRatio="21:9"
+        rounded={true}
+      />
+    </div>
+    <div className="container">
+      <h1>집나간 나영이 찾습니다</h1>
+      <h3>빨리 숙소 목록 띄워주세요</h3>
+    </div>
       <button onClick={handleSubmit}>Api 연결 Test</button>
 
       <button onClick={goToAccommodationDetail}>

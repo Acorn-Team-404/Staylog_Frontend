@@ -1,7 +1,9 @@
 // src/pages/admin/components/AdminReservationDetailModal.tsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import api from "../../../global/api";
 import { formatKST } from "../../../global/utils/date";
+import useCommonCodeSelector from "../../common/hooks/useCommonCodeSelector";
+import type { CommonCodeDto } from "../../common/types";
 
 type Props = {
   open: boolean; // 모달 알림 여부
@@ -28,13 +30,13 @@ type ReservationDetail = {
 
   status: string;      // PENDING | CONFIRMED | CANCELED | COMPLETED ...
 
-  /** ✅ 추가: 인원 관련 */
+  /**  추가: 인원 관련 */
   adults: number | null;
   children: number | null;
   infants: number | null;
   totalGuestCount: number | null;
 
-  /** ✅ 결제 금액(서버가 amount 또는 price를 줄 수 있어 둘 다 고려) */
+  /**  결제 금액(서버가 amount 또는 price를 줄 수 있어 둘 다 고려) */
   finalAmount: number | null;
   price: number | null;
 
@@ -50,6 +52,37 @@ export default function AdminReservationDetailModal({ open, bookingId, onClose }
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
+  // 공통코드: 예약상태/결제수단
+  const reservationCodes = useCommonCodeSelector("reservationStatus") as CommonCodeDto[];
+  const paymentMethodCodes = useCommonCodeSelector("paymentMethods") as CommonCodeDto[];
+
+  const reservationCodeMap = useMemo(() => {
+    const m = new Map<string, CommonCodeDto>();
+    for (const row of reservationCodes ?? []) m.set(row.codeId, row);
+    return m;
+  }, [reservationCodes]);
+
+  const paymentMethodMap = useMemo(() => {
+    const m = new Map<string, CommonCodeDto>();
+    for (const row of paymentMethodCodes ?? []) m.set(row.codeId, row);
+    return m;
+  }, [paymentMethodCodes]);
+
+  const normalizeStatus = (code?: string | null) =>
+    !code ? "" : code.startsWith("RES_") ? code : `RES_${code}`;
+
+  const getStatusView = (status?: string | null) => {
+    const norm = normalizeStatus(status);
+    const cc = reservationCodeMap.get(norm);
+    return {
+      label: cc?.codeName ?? norm ?? "—",
+      color: cc?.attr1 ?? "#6c757d",
+    };
+  };
+
+  const getPayLabel = (code?: string | null) =>
+    (code && (paymentMethodMap.get(code)?.codeName ?? code)) || "—";
+
   // 데이터 로드
   useEffect(() => {
     if (!open || !bookingId) return;
@@ -64,7 +97,6 @@ export default function AdminReservationDetailModal({ open, bookingId, onClose }
       .then((res) => {
         const root = (res as any)?.data?.data ?? (res as any)?.data ?? (res as any);
 
-        // 서버 키 불일치 대비: 안전 변환
         const normalized: ReservationDetail = {
           bookingId: root.bookingId,
           bookingNum: root.bookingNum ?? null,
@@ -82,13 +114,11 @@ export default function AdminReservationDetailModal({ open, bookingId, onClose }
 
           status: root.status,
 
-          // 인원
           adults: root.adults ?? null,
           children: root.children ?? null,
           infants: root.infants ?? null,
           totalGuestCount: root.totalGuestCount ?? null,
 
-          // 금액 (finalAmount 우선, 없으면 price)
           finalAmount: root.finalAmount ?? null,
           price: root.price ?? null,
 
@@ -128,7 +158,6 @@ export default function AdminReservationDetailModal({ open, bookingId, onClose }
 
   if (!open) return null;
 
-  //  표시용 유틸: 결제 금액 우선순위 (finalAmount > price)
   const displayAmount = (d?: ReservationDetail | null) => {
     if (!d) return "—";
     const val = d.finalAmount ?? d.price;
@@ -137,20 +166,16 @@ export default function AdminReservationDetailModal({ open, bookingId, onClose }
 
   return (
     <>
-      {/* 뒤 배경 어둡게  */}
       <div
         className="modal-backdrop fade show"
         style={{ opacity: 0.25 }}
         onClick={onClose}
         aria-hidden="true"
       />
-
-      {/* Modal 본문 (회원 상세와 동일 구조/클래스) */}
       <div className="modal fade show d-block" role="dialog" aria-modal="true">
         <div className="modal-dialog modal-lg modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
-              {/* 제목에 예약번호 표시 */}
               <h5 className="modal-title">
                 예약 상세 {bookingId ? `#${bookingId}` : ""} 
               </h5>
@@ -169,7 +194,6 @@ export default function AdminReservationDetailModal({ open, bookingId, onClose }
 
               {!loading && !err && detail && (
                 <>
-                  {/* 기본 정보 */}
                   <section className="mb-3">
                     <h6 className="mb-2">기본 정보</h6>
                     <table className="table table-sm">
@@ -196,7 +220,6 @@ export default function AdminReservationDetailModal({ open, bookingId, onClose }
                     </table>
                   </section>
 
-                  {/* 일정/상태 */}
                   <section className="mb-3">
                     <h6 className="mb-2">일정 / 상태</h6>
                     <table className="table table-sm">
@@ -215,13 +238,21 @@ export default function AdminReservationDetailModal({ open, bookingId, onClose }
                         </tr>
                         <tr>
                           <th>현재 상태</th>
-                          <td>{detail.status}</td>
+                          <td>
+                            {(() => {
+                              const v = getStatusView(detail.status);
+                              return (
+                                <span className="badge" style={{ backgroundColor: v.color, color: "#fff" }}>
+                                  {v.label}
+                                </span>
+                              );
+                            })()}
+                          </td>
                         </tr>
                       </tbody>
                     </table>
                   </section>
 
-                  {/* ✅ 인원 */}
                   <section className="mb-3">
                     <h6 className="mb-2">인원</h6>
                     <table className="table table-sm">
@@ -240,14 +271,13 @@ export default function AdminReservationDetailModal({ open, bookingId, onClose }
                     </table>
                   </section>
 
-                  {/* 결제 */}
                   <section className="mb-3">
                     <h6 className="mb-2">결제</h6>
                     <table className="table table-sm">
                       <tbody>
                         <tr>
                           <th style={{ width: 160 }}>결제수단</th>
-                          <td>{detail.paymentMethod ?? "—"}</td>
+                          <td>{getPayLabel(detail.paymentMethod)}</td>
                         </tr>
                         <tr>
                           <th>결제금액</th>
@@ -261,7 +291,6 @@ export default function AdminReservationDetailModal({ open, bookingId, onClose }
                     </table>
                   </section>
 
-                  {/* 이력(옵션) */}
                   {(detail.statusLogs?.length || detail.paymentLogs?.length) ? (
                     <section className="mb-2">
                       <h6 className="mb-2">이력</h6>

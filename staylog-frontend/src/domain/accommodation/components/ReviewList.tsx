@@ -40,18 +40,30 @@ const ReviewList = ({ reviews, accommodationId }: ReviewListProps) => {
         </div>
         {/* 리뷰 목록 */}
         {reviews.map((review) => {
+            // HTML 파싱
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(review.content, "text/html");
+
+            // 이미지 src 전부 추출
+            const imageTags = Array.from(doc.querySelectorAll("img"));
+            const images = imageTags.map(img => img.src);
+
+            // 이미지 제거 후 텍스트만 추출
+            imageTags.forEach(img => img.remove());
+            const textContent = doc.body.innerText.trim(); // 순수 텍스트
+
             const isOpened = openReviews[review.boardId] || false;
-            return (
+            return <>
                 <Card key={review.boardId} className="border-0 border-bottom">
                     <Card.Body>
                         {/* 상단 프로필 + 이름 + 객실타입 */}
                         <div className="d-flex align-items-center">
-                            {review.profileImage ? (
-                                <Image src={review.profileImage} width={40} height={40} roundedCircle />
+                            {review.profileUrl ? (
+                                <Image src={review.profileUrl} width={40} height={40} roundedCircle style={{ objectFit: "cover" }}/>
                             ) : (
-                                <i className="bi bi-person-circle" style={{ fontSize:45, color:"#2e2e2e" }}></i>
+                                <i className="bi bi-person-circle" style={{ fontSize: 40, color: "#2e2e2e" }}></i>
                             )}
-                            <strong style={{ fontSize:"1.0rem", marginLeft:"0.5rem" }}>
+                            <strong style={{ fontSize: "1.0rem", marginLeft: "0.5rem" }}>
                                 {review.nickname}
                             </strong>
                         </div>
@@ -67,16 +79,14 @@ const ReviewList = ({ reviews, accommodationId }: ReviewListProps) => {
                             ))}
                         </div>
 
-                        {/* 리뷰 이미지 3개 */}
-                        <Row className="g-2 mb-3">
-                            {[0, 1, 2].map((i) => (
-                                <Col key={i} xs={4}>
-                                    <div style={{ width: "100%", aspectRatio: "1 / 1", overflow: "hidden", borderRadius: "0.25rem"}}>
-                                        <Image
-                                        src={`https://picsum.photos/300/300?random=${i + review.boardId}`} // 예시 이미지
-                                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                                        alt={`review-img-${i}`}
-                                        fluid/>
+                        {/* 리뷰 이미지 4개 고정*/}
+                        <Row className="g-2 mb-2">
+                            {images.slice(0, 4).map((src, i) => (
+                                <Col key={i} xs={3}>
+                                    <div style={{ width: "100%", aspectRatio: "1 / 1", overflow: "hidden", borderRadius: "0.5rem" }}>
+                                        <Image src={src} fluid
+                                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                            alt={`review-img-${i}`}/>
                                     </div>
                                 </Col>
                             ))}
@@ -92,11 +102,11 @@ const ReviewList = ({ reviews, accommodationId }: ReviewListProps) => {
                                 overflow : "hidden",
                                 fontSize : "0.85rem"
                             }}>
-                            {review.content}
+                            {textContent}
                         </div>
 
                         {/* 🔹 리뷰 내용 더보기, 닫기 버튼 오른쪽 위치, 화살표 아이콘*/}
-                        {review.content.split("\n").length > 5 || review.content.length > 200 ? (
+                        {textContent.length > 200 && (
                             <div className="d-flex justify-content-end">
                                 <Button className="p-0 d-flex align-items-center"
                                     onClick={() => toggleContent(review.boardId)}
@@ -114,7 +124,7 @@ const ReviewList = ({ reviews, accommodationId }: ReviewListProps) => {
                                     <i className={`bi ${isOpened ? "bi-chevron-up" : "bi-chevron-down"}`} style={{ color: "#000" }}></i>
                                 </Button>
                             </div>
-                        ) : null}
+                        )}
 
                         {/* 작성일 */}
                         <div className="text-muted mb-2" style={{ fontSize: "0.8rem", marginTop: "0.5rem" }}>
@@ -122,7 +132,7 @@ const ReviewList = ({ reviews, accommodationId }: ReviewListProps) => {
                         </div>
                     </Card.Body>
                 </Card>
-            )
+            </>
         })}
     </>
 };

@@ -38,8 +38,8 @@ function CouponForm({ onClose, mode, onUseCoupon }: CouponFormProps) {
             const availableResponse = await api.get<couponType[]>(`v1/coupon/${userId}/available`);
             setAvailableCoupon(availableResponse);
 
-            const unavailableResponse = await api.get<couponType[]>(`v1/coupon/${userId}/unavailable`);
-            setUnavailableCoupon(unavailableResponse);
+            // const unavailableResponse = await api.get<couponType[]>(`v1/coupon/${userId}/unavailable`);
+            // setUnavailableCoupon(unavailableResponse);
          } catch (err) {
             console.log(err);
             setErrorMsg("쿠폰 정보를 불러오지 못했습니다.")
@@ -48,6 +48,17 @@ function CouponForm({ onClose, mode, onUseCoupon }: CouponFormProps) {
          }
       })()
    }, [userId]);
+
+
+
+   async function getUnavailableCouponList() {
+      try {
+         const unavailableResponse = await api.get<couponType[]>(`v1/coupon/${userId}/unavailable`);
+         setUnavailableCoupon(unavailableResponse);
+      } catch (err) {
+         console.log(err);
+      }
+   }
 
 
    return (
@@ -100,9 +111,9 @@ function CouponForm({ onClose, mode, onUseCoupon }: CouponFormProps) {
             <Tab
                eventKey="used"
                title={
-                  <span>
+                  <span onClick={getUnavailableCouponList}>
                      <i className="bi bi-archive"></i> 사용 완료·만료{' '}
-                     <Badge pill bg="secondary">{unavailableCoupon.length}</Badge>
+                     {/* <Badge pill bg="secondary">{unavailableCoupon.length}</Badge> */}
                   </span>
                }
             >

@@ -137,9 +137,9 @@ function AdminUserPage() {
 
   return (
     <div className="container-fluid py-3">
-      <h1>회원 관리 페이지</h1>
+      <h3>회원 관리 페이지</h3>
 
-      <div className="d-flex align-items-center mt-2">
+      <div className="d-flex align-items-center mt-3">
         <div className="ms-auto d-flex gap-2 flex-wrap">
           <div className="input-group">
             <input
@@ -162,14 +162,28 @@ function AdminUserPage() {
 
       {/* 요약 정보 */}
       {page && (
-        <div className="text-end text-muted mt-2">
-          전체 {page.totalCount}건 ({page.pageNum}/{page.totalPage} 페이지)
-        </div>
+        <small className="text-end text-muted mt-4 d-flex justify-content-end align-items-center gap-1">
+            전체 {page.totalCount}건 (
+            <input
+                type="number"
+                className="form-control-sm form-control border-1 border-light text-center d-inline-block"
+                value={page.totalPage === 0 ? 0 : page.pageNum}
+                style={{ width: '55px' }}
+                onChange={(e) => {
+                    const newPageNum = Number(e.target.value);
+                    if (newPageNum >= 0 && newPageNum <= page.totalPage) {
+                        setSearchParams(prev => ({
+                            ...prev,
+                            pageNum: newPageNum
+                        }));
+                    }
+                }} /><span className="mx-1">/{page.totalPage} 페이지</span>)
+        </small>
       )}
 
       {/* 로딩/에러 */}
       {loading && (
-        <div className="d-flex align-items-center gap-2 text-muted">
+        <div className="d-flex align-items-center gap-2 text-muted mt-3">
           <div className="spinner-border spinner-border-sm" role="status" />
           <span>불러오는 중…</span>
         </div>
@@ -179,7 +193,7 @@ function AdminUserPage() {
       {/*  데스크톱(표)  */}
       {!loading && !errorMsg && (
         <>
-          <div className="table-responsive mt-3 d-none d-lg-block">
+          <div className="table-responsive mt-1 d-none d-lg-block">
             <table className="table table-striped align-middle text-center">
               <thead className="table-light">
                 <tr>

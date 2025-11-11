@@ -123,10 +123,10 @@ export default function AdminReservationPage() {
 
   return (
     <div className="container-fluid py-3">
-      <h1 className="fw-bold mb-3">예약 관리 페이지</h1>
+      <h3>예약 관리 페이지</h3>
 
       {/* 월간 요약 카드 */}
-      <div className="row g-3 mt-2">
+      <div className="row g-3 mt-3">
         {[
           { key: "total", label: "이번 달 총 예약", value: stats?.totalCount },
           { key: "confirmed", label: "확정", value: stats?.confirmedCount },
@@ -158,9 +158,23 @@ export default function AdminReservationPage() {
 
       {/* 요약 정보 */}
       {page && (
-        <div className="text-end text-muted mt-2">
-          전체 {page.totalCount}건 ({page.pageNum}/{page.totalPage} 페이지)
-        </div>
+        <small className="text-end text-muted mt-4 d-flex justify-content-end align-items-center gap-1">
+            전체 {page.totalCount}건 (
+            <input
+                type="number"
+                className="form-control-sm form-control border-1 border-light text-center d-inline-block"
+                value={page.totalPage === 0 ? 0 : page.pageNum}
+                style={{ width: '55px' }}
+                onChange={(e) => {
+                    const newPageNum = Number(e.target.value);
+                    if (newPageNum >= 0 && newPageNum <= page.totalPage) {
+                        setSearchParams(prev => ({
+                            ...prev,
+                            pageNum: newPageNum
+                        }));
+                    }
+                }} /><span className="mx-1">/{page.totalPage} 페이지</span>)
+        </small>
       )}
 
       {/* 로딩/에러 */}
@@ -175,7 +189,7 @@ export default function AdminReservationPage() {
       {/* 데스크톱 (테이블형)*/}
       {!loading && !errorMsg && (
         <>
-          <div className="table-responsive mt-3 d-none d-lg-block">
+          <div className="table-responsive mt-1 d-none d-lg-block">
             <table className="table table-striped align-middle text-center">
               <thead className="table-light">
                 <tr>

@@ -1,7 +1,7 @@
 // src/domain/payment/pages/PaymentCompletePage.tsx
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Container, Card, Button, Row, Col, Spinner } from 'react-bootstrap';
+import { Container, Card, Button, Row, Col, Spinner, Alert } from 'react-bootstrap';
 import { confirmPayment } from '../api';
 import { getBooking } from '../../booking/api';
 import type { PaymentResultResponse } from '../types';
@@ -137,7 +137,9 @@ function PaymentCompletePage() {
       <Card>
         <Card.Body className="p-4">
           {/* 제목 */}
-          <h2 className="text-center mb-4">결제가 완료되었습니다.</h2>
+          <h2 className="text-center mb-4">
+            {paymentResult.virtualAccount ? '가상계좌가 발급되었습니다.' : '결제가 완료되었습니다.'}
+          </h2>
 
           {/* 예약자 성함 */}
           <div className="mb-4 text-center">
@@ -217,6 +219,109 @@ function PaymentCompletePage() {
               </div>
             </Card.Body>
           </Card>
+
+          {/* 가상계좌 정보 (가상계좌인 경우에만 표시) */}
+          {paymentResult.virtualAccount && (
+            <>
+              <Alert variant="warning" className="mb-4">
+                <div className="d-flex align-items-center">
+                  <i className="bi bi-exclamation-triangle-fill me-2" style={{ fontSize: '1.5rem' }}></i>
+                  <div>
+                    <strong>입금 기한: {new Date(paymentResult.virtualAccount.dueDate).toLocaleString('ko-KR', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}</strong>
+                    <div className="mt-1">입금 기한 내에 입금하지 않으면 예약이 자동 취소됩니다.</div>
+                  </div>
+                </div>
+              </Alert>
+
+              <Card className="mb-4 border border-primary">
+                <Card.Body>
+                  <h5 className="mb-3 text-primary">입금 계좌 정보</h5>
+
+                  <Row className="mb-3">
+                    <Col sm={3}>
+                      <strong>은행:</strong>
+                    </Col>
+                    <Col sm={9}>
+                      <span className="fs-5">{paymentResult.virtualAccount.bank}</span>
+                    </Col>
+                  </Row>
+
+                  <Row className="mb-3">
+                    <Col sm={3}>
+                      <strong>계좌번호:</strong>
+                    </Col>
+                    <Col sm={9}>
+                      <div className="d-flex align-items-center">
+                        <span className="fs-5 me-2 font-monospace">{paymentResult.virtualAccount.accountNumber}</span>
+                        <Button
+                          variant="outline-secondary"
+                          size="sm"
+                          onClick={() => {
+                            navigator.clipboard.writeText(paymentResult.virtualAccount!.accountNumber);
+                            alert('복사되었습니다.');
+                          }}
+                        >
+                          <i className="bi bi-clipboard"></i> 복사
+                        </Button>
+                      </div>
+                    </Col>
+                  </Row>
+
+                  <Row className="mb-3">
+                    <Col sm={3}>
+                      <strong>예금주:</strong>
+                    </Col>
+                    <Col sm={9}>
+                      <span className="fs-5">{paymentResult.virtualAccount.customerName}</span>
+                    </Col>
+                  </Row>
+
+                  <Row>
+                    <Col sm={3}>
+                      <strong>입금금액:</strong>
+                    </Col>
+                    <Col sm={9}>
+                      <div className="d-flex align-items-center">
+                        <span className="fs-4 fw-bold text-primary me-2">
+                          {paymentResult.amount.toLocaleString()}원
+                        </span>
+                        <Button
+                          variant="outline-secondary"
+                          size="sm"
+                          onClick={() => {
+                            navigator.clipboard.writeText(paymentResult.amount.toString());
+                            alert('복사되었습니다.');
+                          }}
+                        >
+                          <i className="bi bi-clipboard"></i> 복사
+                        </Button>
+                      </div>
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Card>
+
+              {/* 안내 사항 */}
+              <Card className="mb-4 bg-light">
+                <Card.Body>
+                  <h6 className="mb-3">안내 사항</h6>
+                  <ul className="mb-0">
+                    <li>입금 기한 내에 정확한 금액을 입금해주세요.</li>
+                    <li>입금자명은 예약자명과 일치해야 합니다.</li>
+                    <li>입금 확인은 보통 1~5분 정도 소요됩니다.</li>
+                    <li>입금이 완료되면 알림 또는 이메일로 안내됩니다.</li>
+                    <li>입금 기한이 지나면 예약이 자동 취소되며, 계좌는 사용할 수 없습니다.</li>
+                  </ul>
+                </Card.Body>
+              </Card>
+            </>
+          )}
 
           {/* 버튼 */}
           <Row className="mt-4">

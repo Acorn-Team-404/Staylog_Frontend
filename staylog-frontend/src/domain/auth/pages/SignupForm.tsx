@@ -288,8 +288,8 @@ function SignupForm() {
       <div className="row justify-content-center">
          <div className="col-12 col-md-8 col-lg-6 mb-5">
             <div className="text-center mb-4">
-               <h1>SIGNUP</h1>
-               <h4 className="text-secondary">회원가입</h4>
+               <h1 className="fs-3 fw-normal text-dark" style={{ letterSpacing: '0.5rem' }}>SIGNUP</h1>
+               <h4 className="fs-5 text-secondary">회원가입</h4>
             </div>
 
             <hr className="mb-4" />

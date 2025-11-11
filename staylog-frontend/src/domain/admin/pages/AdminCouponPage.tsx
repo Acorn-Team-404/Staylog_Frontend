@@ -46,7 +46,7 @@ function AdminCouponPage() {
       newValidState.couponName = couponState.couponName.trim().length > 0 && couponState.couponName.length <= 20;
 
       // 할인율: 1~100
-      newValidState.discount = couponState.discount >= 1 && couponState.discount <= 100;
+      newValidState.discount = couponState.discount >= 1 && couponState.discount <= 50;
 
       // 만료일: 오늘 날짜 이후
       const today = new Date().toISOString().split('T')[0];
@@ -250,7 +250,7 @@ function AdminCouponPage() {
                                           />
                                           <InputGroup.Text>%</InputGroup.Text>
                                           <Form.Control.Feedback type="invalid">
-                                             1에서 100 사이의 숫자를 입력해주세요.
+                                             1에서 50 사이의 숫자를 입력해주세요.
                                           </Form.Control.Feedback>
                                        </InputGroup>
                                     </Form.Group>

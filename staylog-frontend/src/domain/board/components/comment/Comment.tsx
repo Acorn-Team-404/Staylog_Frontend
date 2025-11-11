@@ -63,11 +63,11 @@ const Comment = ({ userId, comment, editingComment, onEdit, onDelete, onUpdate, 
                 {/* 작성자 정보 영역 */}
                 <div className="d-flex align-items-center mb-2">
                     {/* 프로필 이미지 */}
-                    {comment.profileImage ? (
-                        <img className="profileImage me-2" src={comment.profileImage}
-                            style={{ width: "2.8rem", height: "2.8rem", borderRadius: "50%", objectFit: "cover" }} />
+                    {comment.profileUrl ? (
+                        <img className="profileImage me-2" src={comment.profileUrl}
+                            style={{ width : "2.8rem", height : "2.8rem", borderRadius : "50%", objectFit : "cover" }}/>
                     ) : (
-                        <i className="bi bi-person-circle me-2" style={{ fontSize: "2.8rem", color: "#434343ff" }}></i>
+                        <i className="bi bi-person-circle me-2" style={{ fontSize : "2.8rem", color : "#434343ff" }}></i>
                     )}
 
                     {/* 텍스트 컬럼 */}

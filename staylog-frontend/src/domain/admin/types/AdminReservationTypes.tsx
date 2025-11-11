@@ -23,6 +23,10 @@ export type AdminReservation = {
   status: string;
   statusName?: string;   // 서버에서 내려주는 한글명
   statusColor?: string;  // COMMON_CODE.ATTR1
+
+  /** ✅ 결제 정보 */
+  paymentMethod?: string | null; // 결제수단
+  paidAt?: string | null;        // 결제일시 (LocalDateTime → 문자열)
 };
 
 // BE 응답 (권장)

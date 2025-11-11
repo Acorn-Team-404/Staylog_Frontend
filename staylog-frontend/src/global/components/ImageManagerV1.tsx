@@ -20,7 +20,6 @@ export interface ImageManagerProps {
   uploadTrigger?: number;
   onUploadComplete?: (uploadedImages: ImageData[]) => void; // 인자 타입 수정
   onUploadError?: (error: string) => void;
-  maxImages?: number; // 최대 이미지 개수 제한 prop 추가
 }
 
 const ImageManager: React.FC<ImageManagerProps> = ({
@@ -30,14 +29,12 @@ const ImageManager: React.FC<ImageManagerProps> = ({
   uploadTrigger,
   onUploadComplete,
   onUploadError,
-  maxImages, // maxImages prop 추가
 }) => {
   const [items, setItems] = useState<DroppedFile[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  
 
   // 3. 기존 이미지 로딩 로직
   useEffect(() => {
@@ -68,12 +65,6 @@ const ImageManager: React.FC<ImageManagerProps> = ({
 
   const handleFileSelection = (files: FileList | null) => {
     if (!files) return;
-
-    // 전체 개수 확인 로직으로 변경 (All or Nothing)
-    if (maxImages && items.length + files.length > maxImages) {
-      alert(`최대 ${maxImages}개의 이미지만 업로드할 수 있습니다. (현재 ${items.length}개, 추가 ${files.length}개)`);
-      return; // 전체 추가 작업을 취소
-    }
 
     const newFiles = Array.from(files)
       .filter(file => file.type.startsWith('image/'))
@@ -204,27 +195,22 @@ const ImageManager: React.FC<ImageManagerProps> = ({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      {(!maxImages || items.length < maxImages) && (
-        <div
-          className={`p-4 border-2 border-dashed rounded-3 text-center ${isLoading ? 'border-secondary' : 'border-info'}`}
-          style={{ cursor: isLoading ? 'not-allowed' : 'pointer', transition: 'all 0.2s' }}
-          onClick={onDropzoneClick}
-        >
-          <input
-            ref={inputRef}
-            type="file"
-            multiple
-            accept="image/*"
-            style={{ display: 'none' }}
-            onChange={e => handleFileSelection(e.target.files)}
-            disabled={isLoading}
-          />
-          <p className="mb-0">
-            여기로 이미지를 드래그하거나 클릭하여 파일을 선택하세요
-            {maxImages && ` (${items.length}/${maxImages})`}
-          </p>
-        </div>
-      )}
+      <div
+        className="p-4 border-2 border-dashed rounded-3 text-center border-info"
+        style={{ cursor: 'pointer', transition: 'all 0.2s' }}
+        onClick={onDropzoneClick}
+      >
+        <input
+          ref={inputRef}
+          type="file"
+          multiple
+          accept="image/*"
+          style={{ display: 'none' }}
+          onChange={e => handleFileSelection(e.target.files)}
+          disabled={isLoading}
+        />
+        <p className="mb-0">여기로 이미지를 드래그하거나 클릭하여 파일을 선택하세요</p>
+      </div>
 
       {isLoading && <p>로딩 중...</p>}
 

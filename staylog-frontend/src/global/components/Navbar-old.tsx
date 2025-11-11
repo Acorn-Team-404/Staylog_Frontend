@@ -1,14 +1,14 @@
-import "bootstrap/dist/js/bootstrap.bundle.min.js"; // Bootstrap의 JS 동작 추가
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { logout } from "../../domain/auth/api";
+import Modal from "./Modal";
+import type { ModalMode } from "../types/ModalMode";
 import NotiCanvas from "../../domain/notification/pages/NotiCanvas";
 import SearchModal from "../../domain/search/components/SearchModal";
+import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../store/types";
-import type { ModalMode } from "../types/ModalMode";
-import Modal from "./Modal";
 import MypageDropdown from "./MypageDropdown"; // 마이페이지 사람아이콘 드롭다운 컴포넌트
+import { logout } from "../../domain/auth/api";
+import "bootstrap/dist/js/bootstrap.bundle.min.js"; // Bootstrap의 JS 동작 추가
 
 
 function Navbar() {
@@ -17,7 +17,6 @@ function Navbar() {
 
    const nickname = useSelector((state: RootState) => state.userInfo?.nickname); // 없을 수도 있으니 -> ?.
 
-   const profileImage = useSelector((state: RootState) => state.userInfo?.profileImage); // 프로필 이미지 URL 가져오기
 
    const notiUnreadCount = useSelector((state: RootState) => state.notiUnreadCount);
 
@@ -126,12 +125,21 @@ function Navbar() {
                      <>
                         {/* 닉네임 표시 */}
                         <span className="fw-semibold">{nickname}</span>
-
+                        {/* 항상 사람 아이콘은 항상 표시 */}
                         {/* 아이콘 + 마이페이지 드롭다운 통합 */}
+                        {nickname ? (
                            <li className="nav-item">
-                              {/* profileImage prop 전달 */}
-                              <MypageDropdown onClose={() => {}} profileImage={profileImage} />
+                              <MypageDropdown onClose={() => {}} />
                            </li>
+                        ) : (
+                           <li className="nav-item">
+                              <i
+                                 className="bi bi-person-circle"
+                                 style={{ fontSize: "32px", cursor: "pointer" }}
+                                 onClick={() => openModal("login")}
+                              ></i>
+                           </li>
+                        )}
 
                         {/* 알림 아이콘 (로그인 시만 표시하기) */}
                         <li onClick={openNoti} className="nav-item position-relative" style={{ cursor: 'pointer' }}>

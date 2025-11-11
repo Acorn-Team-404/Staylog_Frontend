@@ -1,7 +1,7 @@
 // src/domain/board/Review.tsx
 
-import { useEffect, useState } from "react";
-import { Button, Col, Container, Row, Table } from "react-bootstrap";
+import { useCallback, useEffect, useState } from "react";
+import { Col, Container, Dropdown, Row, Table } from "react-bootstrap";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import api from "../../../global/api";
 import { type BoardDto, type PageInfo } from "../types/boardtypes";
@@ -9,14 +9,19 @@ import { type BoardDto, type PageInfo } from "../types/boardtypes";
 import "../components/RegionSidebar.css";
 import "./Board.css";
 
-import PaginationBar from "../../../global/components/PaginationBar";
+
 import useGetUserIdFromToken from "../../auth/hooks/useGetUserIdFromToken";
-import RegionsSideBar from "../components/RegionSideBar";
-import SortModal, { type SortOption } from "../../../global/components/SortModal";
 import useGetUserRoleFromToken from "../../auth/hooks/useGetUserRoleFromToken";
+import RegionsSideBar from "../components/RegionSideBar";
 
 import JournalCard from "../components/JournalCard";
+import RegionButton from "../components/RegionButton";
+import Pagination from "../../../global/components/Pagination";
+
 // import { getImageUrl } from "../../../global/hooks/getImageUrl"; // 목록 페이지에서는 불필요
+
+
+
 
 function Boards() {
   // 게시판 카테고리
@@ -29,6 +34,8 @@ function Boards() {
   // 상태값 관리
   const [boards, setBoards] = useState<BoardDto[]>([]);
   const [selectedRegions, setSelectedRegions] = useState<string[]>(["전체"]);
+  const [loading, setLoading] = useState<boolean>(false);
+
 
   // 유저 정보
   const userId = useGetUserIdFromToken();
@@ -36,123 +43,137 @@ function Boards() {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    console.log("🧩 userId:", userId, "| role:", role);
-  }, [userId, role]);
-
-  // 정렬 옵션
-  const sortOption: SortOption<string>[] = [
-    { value: "latest", label: "최신순" },
-    { value: "views", label: "조회순" },
-    { value: "likes", label: "추천순" },
-  ];
-
-  // 정렬 상태
-  const [isSortOpen, setIsSortOpen] = useState<boolean>(false);
-
   // 페이지 정보
   const [pageInfo, setPageInfo] = useState<PageInfo>({
     boardType: apiBoardType,
     pageNum: 1,
+    pageSize: boardType === "journal" ? 9 : 10,
+    totalCount: 0,
+    totalPage: 0,
     startPage: 1,
     endPage: 5,
-    totalPage: 0,
-    totalCount: 0,
-    pageSize: boardType === "journal" ? 9 : 10,
+    offset: 0,   
     regionCodes: [],
     sort: "latest",
   });
 
-  // 게시글 목록 조회
-  const fetchBoards = async (
-    pageNum: number = 1,
-    sortOption?: "latest" | "likes" | "views"
-  ) => {
-    try {
-      const validRegions = selectedRegions.includes("전체")
-        ? []
-        : selectedRegions;
 
-      const res = await api.get(`/v1/boards`, {
-        params: {
-          boardType: apiBoardType,
-          pageNum,
-          pageSize: pageInfo.pageSize,
-          regionCodes: validRegions,
-          sort: sortOption || pageInfo.sort,
-        },
-      });
 
-      const list = res.boardList || res?.data?.data?.boardList || [];
-      const page = res.pageResponse || res?.data?.data?.pageResponse || {};
+  // boardType 바뀔 때 페이지 초기화 
+  useEffect(()=>{
+    setPageInfo((prev) => ({
+      ...prev,
+      boardType: apiBoardType,
+      pageNum: 1,
+      pageSize: boardType === "journal" ? 9 : 10,
+    }));
+    fetchBoards(1, pageInfo.sort);
+  }, [boardType])
 
-      setBoards(list);
-      setPageInfo((prev) => ({
-        ...prev,
-        pageNum: page.pageNum || 1,
-        startPage: page.startPage || 1,
-        endPage: page.endPage || 1,
-        totalPage: page.totalPage || 1,
-        totalCount: page.totalCount || 0,
-      }));
 
-      console.log("📦 불러온 게시글 목록:", list);
-    } catch (err) {
-      console.error("게시글 목록 조회 실패:", err);
-    }
-  };
+  // fetchBoards 
+  const fetchBoards = useCallback(
+    async (
+      pageNum: number = 1,
+      sortOption?: "latest" | "likes" | "views"
+    ) => {
+      try {
+        setLoading(true);
+        const validRegions = selectedRegions.includes("전체")
+          ? []
+          : selectedRegions;
+  
+        const res = await api.post(`/v1/boardList`, {
+          
+            boardType: apiBoardType,
+            pageNum,
+            pageSize: pageInfo.pageSize,
+            regionCodes: validRegions,
+            sort: sortOption || pageInfo.sort,
+            
+          });
+  
+        const list = res?.boardList || [];
+        const page = res?.pageResponse || {};
+  
+        setBoards(list);
+        setPageInfo((prev) => ({
+          ...prev,
+          pageNum: page.pageNum || 1,
+          startPage: page.startPage || 1,
+          endPage: page.endPage || 1,
+          totalPage: page.totalPage || 1,
+          totalCount: page.totalCount || 0,
+        }));
+  
+        console.log("📦 불러온 게시글 목록:", list);
+      } catch (err) {
+        console.error("게시글 목록 조회 실패:", err);
+      } finally {
+        setLoading(false);
+      }
+    }, [apiBoardType, pageInfo.pageSize, selectedRegions]
+  );
+
+  // ✅ 실제로 한 번만 호출 (boardType, 필터, 정렬 바뀔 때만)
+  useEffect(() => {
+    fetchBoards(1, pageInfo.sort);
+  }, [fetchBoards, pageInfo.sort, boardType]);
 
   // 정렬 핸들러
   const handleSelectSort = (newValue: string) => {
     const sortValue = newValue as "latest" | "likes" | "views";
     setPageInfo((prev) => ({ ...prev, sort: sortValue, pageNum: 1 }));
-    setIsSortOpen(false);
   };
 
-  // boardType 변경 시 페이지 사이즈 업데이트
-  useEffect(() => {
-    setPageInfo((prev) => ({
-      ...prev,
-      boardType: apiBoardType,
-      pageSize: boardType === "journal" ? 9 : 10,
-    }));
-  }, [boardType]);
+  // 정렬 옵션
+  type SortOption = {
+    label: string;
+    value: string;
+  };
 
-  // 목록 조회
-  useEffect(() => {
-    fetchBoards(1, pageInfo.sort);
-    
-  }, [selectedRegions, boardType, pageInfo.sort]);
+  const sortOption: SortOption[] = [
+    { value: "latest", label: "최신순" },
+    { value: "views", label: "조회순" },
+    { value: "likes", label: "추천순" },
+  ];
 
+   
 
   return (
     <>
       {/* 상단 제목 */}
       <div className="mt-4 text-center">
         <h2 className="fw-bold p-4">
-          {boardType === "journal" ? "저널 게시판" : "리뷰 게시판"}
+          {boardType === "journal" ? "JOURNAL" : "REVIEW"}
         </h2>
       </div>
 
       <Container fluid="lg" className="mt-4">
-        <Row className="gy-4">
-          {/* 좌측 지역 */}
-          <Col xs={12} md={3} lg={2}>
-            <div className="px-3">
+        <Row>
+          {/* 지역 사이드바 - md 이상에서만 표시 */}
+          <Col md={3} lg={2} className="d-none d-md-block">            
               <RegionsSideBar
                 selectedRegions={selectedRegions}
                 setSelectedRegions={setSelectedRegions}
-              />
-            </div>
+              />            
+          </Col>
+
+          {/* 지역 선택 버튼 - 모바일용 */}
+          <Col xs={12} className="d-md-none mb-2">
+            <RegionButton
+              selectedRegions={selectedRegions}
+              setSelectedRegions={setSelectedRegions}
+            />
           </Col>
 
           {/* 메인 목록 */}
           <Col xs={12} md={9} lg={10}>
-            <div className="d-flex justify-content-end gap-3 mb-3">
+            <div className="d-flex justify-content-end gap-2 mb-3">
               {/* 리뷰 등록 버튼 */}
               {boardType === "review" && userId && (
                 <button
-                  className="btn btn-secondary"
+                  className="btn btn-sm btn-secondary"
                   onClick={() => navigate(`/form/${boardType}`)}
                 >
                   리뷰 등록
@@ -162,7 +183,7 @@ function Boards() {
               {/* 저널 등록 버튼 */}
               {boardType === "journal" && role?.toUpperCase().includes("VIP") && (
                 <button
-                  className="btn btn-secondary"
+                  className="btn btn-sm btn-secondary"
                   onClick={() => navigate(`/form/${boardType}`)}
                 >
                   저널 등록
@@ -170,38 +191,47 @@ function Boards() {
               )}
 
               {/* 정렬 */}
-              <Button
-                variant="outline-secondary"
-                onClick={() => setIsSortOpen((prev) => !prev)}
-                className="fw-semibold"
-              >
-                {sortOption.find((opt) => opt.value === pageInfo.sort)?.label ||
-                  "정렬"}{" "}
-                ▾
-              </Button>
+              
+              <Dropdown align="end">
+                <Dropdown.Toggle
+                  variant="outline-secondary"
+                  size="sm"
+                  id="sort-dropdown"
+                  className="fw-semibold"
+                >
+                  {
+                    sortOption.find((opt) => opt.value === pageInfo.sort)
+                      ?.label || "정렬"
+                  }{""}
+                  
+                </Dropdown.Toggle>              
+
+                <Dropdown.Menu>
+                  {sortOption.map((opt) => (
+                    <Dropdown.Item
+                      key={opt.value}
+                      active={opt.value === pageInfo.sort}
+                      onClick={() => handleSelectSort(opt.value)}
+                    >
+                      {opt.label}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
             </div>
+            
 
-            {/* 정렬 모달 */}
-            {isSortOpen && (
-              <div
-                className="position-absolute mt-2"
-                style={{ right: "2rem", zIndex: 1050 }}
-              >
-                <SortModal
-                  isOpen={isSortOpen}
-                  onClose={() => setIsSortOpen(false)}
-                  options={sortOption}
-                  selectedValue={pageInfo.sort}
-                  onSelectSort={handleSelectSort}
-                  title="정렬"
-                />
-              </div>
-            )}
-
-            {/* 리뷰 게시글 목록 */}
-            {boardType === "review" && (
+            
+            {/* 게시판 목록 */}
+            
+            {loading ? (
+              <p className="text-center text-muted mt-4">로딩 중...</p>
+            ) : (
+              <>
+              {/* 리뷰 게시글 목록 */}
+              {boardType === "review" && (
               <div className="table-responsive-wrapper">
-                <Table className="review-table align-middle text-center m-4">
+                <Table className="review-table align-middle text-center">
                   <thead>
                     <tr>
                       <th>번호</th>
@@ -230,7 +260,7 @@ function Boards() {
                           </td>
                           <td>
                             <NavLink
-                              to={`/review/${board.boardId}`}
+                              to={`/board/${board.boardId}`}
                               className="fw-bold text-dark text-decoration-none"
                             >
                               {board.title}
@@ -254,31 +284,41 @@ function Boards() {
                   </tbody>
                 </Table>
               </div>
-            )}
+              )}
+            
+            
 
             {/* 저널 게시글 목록 */}
             {boardType === "journal" && (
-              <Row className="g-4 px-4">
+              <Row className="journal-grid g-3">
                 {boards.length > 0 ? (
                   boards.map((board) => (
-                    <Col key={board.boardId} xs={12} sm={6} md={4}>
+                    <Col key={board.boardId} 
+                      xs={12} 
+                      sm={6} 
+                      lg={4} 
+                    >
                     <JournalCard board={board} />
                   </Col>
                   ))
                 ) : (
+                  <Col xs={12}>
                   <p className="text-center text-muted mt-4">
                     게시글이 없습니다.
                   </p>
+                  </Col>
                 )}
               </Row>
             )}
+            </>
+            )}
+
 
             {/* 페이지네이션 */}
-            <div className="d-flex justify-content-center mt-3">
-              <PaginationBar pageState={pageInfo} onMove={fetchBoards} />
-            </div>
+            {pageInfo && <Pagination page={pageInfo} onPageChange={fetchBoards} />}
+            
           </Col>
-        </Row>
+        </Row> 
       </Container>
     </>
   );

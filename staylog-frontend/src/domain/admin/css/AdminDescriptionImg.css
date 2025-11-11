@@ -1,0 +1,6 @@
+.description-content img {
+    max-width: 100% !important;
+    height: auto !important;
+    display: block;
+    margin: 1rem 0;
+}

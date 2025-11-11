@@ -83,3 +83,11 @@
 .notification-close-btn:hover {
 	background-color: #dddddd;
 }
+
+/* 게시글 본문 이미지 반응형 처리 */
+.board-content img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}

@@ -4,14 +4,12 @@ export interface AccommodationReviewListType {
     readonly boardId : number;
     readonly userId : number;
     nickname : string;
-    profileImage : string;
+    contentUrl : string | null; // 리뷰 미리보기 대표 이미지
+    profileUrl : string | null; // 프로필 이미지
     title : string;
     content : string;
     rating : number;
-    reviewCount : number;
     createdAt : string;
-    images?: string[];
-
 }
 export interface AccommodationRoomListType {
     maxAdult: number;
@@ -23,6 +21,7 @@ export interface AccommodationRoomListType {
     rmTypeNameEn : string;
     rmTypeName : string;
     price : number;
+    imageUrl?: string; 
 }
 
 export interface AccommodationDetailType {

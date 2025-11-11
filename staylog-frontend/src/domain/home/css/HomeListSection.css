@@ -8,3 +8,8 @@
   flex-direction: row !important;
   align-items: stretch !important;
 }
+
+.swiper-button-disabled {
+  opacity: 0 !important;
+  pointer-events: none;
+}

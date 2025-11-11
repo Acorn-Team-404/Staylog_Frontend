@@ -20,6 +20,7 @@ function AdminLayout() {
         { path: 'reservations', label: '예약관리' },
         { path: 'boards', label: '게시판 관리' },
         { path: 'coupon', label: '쿠폰 관리' },
+        { path: 'home', label: '홈 화면 관리' }, // 새로 추가
     ];
     // 현재 활성화된 메뉴 찾기
     const getCurrentMenu = () => {
@@ -88,6 +89,9 @@ function AdminLayout() {
                                 </li>
                                 <li className="nav-item mb-1">
                                     <NavLink to="coupon" className={navLinkClass}>쿠폰 관리</NavLink>
+                                </li>
+                                <li className="nav-item mb-1"> {/* 새로 추가 */}
+                                    <NavLink to="home" className={navLinkClass}>홈 화면 관리</NavLink>
                                 </li>
                             </ul>
                         </div>

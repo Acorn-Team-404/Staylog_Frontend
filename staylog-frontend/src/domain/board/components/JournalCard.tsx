@@ -1,58 +1,60 @@
 import { Card } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { getImageUrl } from "../../../global/hooks/getImageUrl";
-
 
 
 export default function JournalCard({ board }: { board: any }) {
   const navigate = useNavigate();
 
-  // ✅ 저널 전용이므로 하드코딩
-  const apiBoardType = "BOARD_JOURNAL";
+  console.log("📦:", board.boardId, board.imageUrl);
 
-  const imageUrl = getImageUrl(apiBoardType, board.boardId);
+  const imageUrl =
+    board?.imageUrl && board.imageUrl.trim() !== "" 
+      ? board.imageUrl
+      : "/default-thumbnail.jpg";
+
 
   return (
     <Card
-      className="shadow-sm h-100 hover-card border-0"
-      style={{ cursor: "pointer", transition: "transform 0.2s ease" }}
-      onClick={() => navigate(`/journal/${board.boardId}`)}
-      onMouseEnter={(e) =>
-        (e.currentTarget.style.transform = "translateY(-4px)")
-      }
-      onMouseLeave={(e) =>
-        (e.currentTarget.style.transform = "translateY(0)")
-      }
+      className="shadow-sm h-100 journal-card border-0"
+      // style={{ cursor: "pointer", transition: "transform 0.2s ease" }}
+      onClick={() => navigate(`/board/${board.boardId}`)}
+      // onMouseEnter={(e) =>
+      //   (e.currentTarget.style.transform = "translateY(-4px)")
+      // }
+      // onMouseLeave={(e) =>
+      //   (e.currentTarget.style.transform = "translateY(0)")
+      // }
     >
       {/* 이미지 */}
+      <div className="image-container position-relative">
       <Card.Img
         variant="top"
-        src={imageUrl || "/default-thumbnail.jpg"}
+        src={imageUrl}
         alt="thumbnail"
-        style={{
-          height: "180px",
-          objectFit: "cover",
-          borderTopLeftRadius: "0.5rem",
-          borderTopRightRadius: "0.5rem",
+        className="journal-image"
+        onError={(e) => {
+          // 이미지가 깨졌거나 로드 실패했을 때 대체 이미지로 변경
+          e.currentTarget.src = "/default-thumbnail.jpg";
         }}
       />
 
       {/* 오버레이 정보 */}
-      <div
-        className="position-absolute top-0 end-0 d-flex gap-2 p-2 text-white fw-semibold"
-        style={{
-          background: "rgba(0, 0, 0, 0.4)",
-          fontSize: "0.85rem",
-        }}
-      >
-        <div className="d-flex align-items-center">
-          <i className="bi bi-eye me-1"></i>
-          {board.viewsCount ?? 0}
+      <div className="overlay">
+        <div className="overlay-content text-center">
+          <div className="d-flex justify-content-center align-items-center gap-2">
+            {/* 조회수 */}
+            <div className="d-flex align-items-center gap-1">
+              <i className="bi bi-eye"></i>
+              <span>{board.viewsCount ?? 0}</span>
+            </div>
+            {/* 좋아요 */}
+            <div className="d-flex align-items-center gap-1">
+              <i className="bi bi-heart-fill text-danger"></i>
+              <span>{board.likesCount ?? 0}</span>
+            </div>
+          </div>
         </div>
-        <div className="d-flex align-items-center">
-          <i className="bi bi-heart-fill text-danger me-1"></i>
-          {board.likesCount ?? 0}
-        </div>
+      </div>
       </div>
 
       {/* 본문 */}

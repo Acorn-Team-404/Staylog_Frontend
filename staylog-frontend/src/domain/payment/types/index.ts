@@ -46,4 +46,15 @@ export interface PaymentResultResponse {
   requestedAt: string;
   approvedAt: string;
   failureReason?: string;      // 실패 사유 (실패 시)
+
+  // 가상계좌 정보 (가상계좌인 경우 Toss 응답에 포함)
+  virtualAccount?: {
+    accountType: string;       // 계좌 타입
+    accountNumber: string;     // 계좌번호
+    bank: string;              // 은행명 (예: "신한")
+    customerName: string;      // 예금주 (입금할 사람 이름)
+    dueDate: string;           // 입금 기한 (ISO 8601)
+    settlementStatus: string;  // 정산 상태
+  };
 }
+

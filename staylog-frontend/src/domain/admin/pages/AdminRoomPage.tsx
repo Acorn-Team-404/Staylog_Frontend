@@ -34,9 +34,6 @@ function AdminRoomPage() {
     const location = useLocation(); // 현재 위치 훅
     const [rooms, setRooms] = useState<AdminRoomListData[]>([]);
 
-    // location.state에서 전달된 숙소 이름 가져오기
-    const accommodationName = location.state?.accommodationName;
-
     // location.state에서 전달된 검색어 상태 초기화
     const [searchParams, setSearchParams] = useState<AdminRoomSearchParams>(
         location.state?.searchParams || {
@@ -115,7 +112,6 @@ function AdminRoomPage() {
             state: {
                 searchParams,   // 현재 검색 조건
                 inputKeyword,   // 현재 검색어
-                from: location.pathname  // 이전 페이지 경로
             }
         });
     };
@@ -164,11 +160,15 @@ function AdminRoomPage() {
                         title="숙소 상세보기로 이동"
                         onClick={() => handleGoToAccommDetail(accommodationId)}
                         style={{ cursor: 'pointer', textDecoration: 'underline' }}>
-                        {accommodationName}
+                        {rooms[0]?.accommodationName}
                     </span> 객실 목록
                 </h3>
-                <button className="btn btn-outline-light text-dark mt-2 fw-bold" style={{ backgroundColor: '#ebebebff' }} onClick={() => handleToAddPage(accommodationId)}>
-                    <i className="bi bi-plus-lg"></i> 객실 등록
+                <button
+                    title="새 객실 등록"
+                    className="btn btn-outline-light text-dark mt-2 fw-bold"
+                    style={{ backgroundColor: '#ebebebff' }} onClick={() => handleToAddPage(accommodationId)}
+                >
+                    <i className="bi bi-plus-lg"></i> <span className="d-none ms-2 d-md-inline">새 객실 등록</span>
                 </button>
             </div>
 
@@ -277,62 +277,128 @@ function AdminRoomPage() {
                 </small>
             )}
 
-            <table className="table table-striped text-center mt-1 custom-table">
-                <thead className="table-light">
-                    <tr>
-                        <th style={{ width: '8%' }}>번호</th>
-                        <th>객실명</th>
-                        <th style={{ width: '10%' }}>유형</th>
-                        <th style={{ width: '10%' }}>가격</th>
-                        <th style={{ width: '20%' }}>최대 인원(성인)</th>
-                        <th style={{ width: '15%' }}>등록일</th>
-                        <th style={{ width: '10%' }}>상태</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {rooms.length === 0 ? ( // 객실이 하나도 없을 때
+            {/* ---------- 데스크톱(≥lg): 테이블 ---------- */}
+            <div className="table-responsive mt-1 d-none d-lg-block">
+                <table className="table table-striped text-center mt-1 custom-table">
+                    <thead className="table-light">
                         <tr>
-                            <td colSpan={7} className="text-center py-5">
-                                <div className="text-muted">
-                                    <i className="bi bi-inbox fs-1 d-block mb-3"></i>
-                                    <p className="mb-0">등록된 객실이 없습니다.</p>
-                                </div>
-                            </td>
+                            <th style={{ width: '8%' }}>번호</th>
+                            <th>객실명</th>
+                            <th style={{ width: '10%' }}>유형</th>
+                            <th style={{ width: '10%' }}>가격</th>
+                            <th style={{ width: '20%' }}>최대 인원(성인)</th>
+                            <th style={{ width: '15%' }}>등록일</th>
+                            <th style={{ width: '10%' }}>상태</th>
                         </tr>
-                    ) : (
-                        rooms.map((item, index) => ( // 객실이 있을 때
-                            <tr key={item.roomId}>
-                                <td>{index + 1}</td>
-                                <td>
-                                    <button
-                                        type="button"
-                                        className="btn btn-link p-0 text-decoration-none"
-                                        onClick={() => handleToDetailPage(item.roomId!)}
-                                    >
-                                        {item.name}
-                                    </button>
+                    </thead>
+                    <tbody>
+                        {rooms.length === 0 ? ( // 객실이 하나도 없을 때
+                            <tr>
+                                <td colSpan={7} className="text-center py-5">
+                                    <div className="text-muted">
+                                        <i className="bi bi-inbox fs-1 d-block mb-3"></i>
+                                        <p className="mb-0">등록된 객실이 없습니다.</p>
+                                    </div>
                                 </td>
-                                <td>{item.typeName}</td>
-                                <td>{item.price}</td>
-                                <td>{item.maxAdult}</td>
-                                <td>{formatKST(item.createdAt)}</td>
-                                <td>
+                            </tr>
+                        ) : (
+                            rooms.map((item, index) => ( // 객실이 있을 때
+                                <tr key={item.roomId}>
+                                    <td>{index + 1}</td>
+                                    <td>
+                                        <button
+                                            type="button"
+                                            className="btn btn-link p-0 text-decoration-none"
+                                            onClick={() => handleToDetailPage(item.roomId!)}
+                                        >
+                                            {item.name}
+                                        </button>
+                                    </td>
+                                    <td>{item.typeName}</td>
+                                    <td>{item.price!.toLocaleString()} 원</td>
+                                    <td>{item.maxAdult}</td>
+                                    <td>{formatKST(item.createdAt)}</td>
+                                    <td>
+                                        <select
+                                            className="form-select form-select-sm"
+                                            value={item.deletedYn}
+                                            onChange={(e) => handleStatusChange(item.accommodationId, item.roomId, e)}
+                                        >
+                                            <option value="N">활성</option>
+                                            <option value="Y">대기</option>
+                                        </select>
+                                        <span className={`badge bg-${item.deletedYn === 'N' ? 'success' : 'danger'}`}>
+                                            {item.deletedYn === 'N' ? '활성' : '대기'}
+                                        </span>
+                                    </td>
+                                </tr>
+                            )))}
+                    </tbody>
+                </table>
+            </div>
+
+            {/* ---------- 모바일(<lg): 카드 ---------- */}
+            <div className="d-lg-none d-grid gap-3 mt-3">
+                {rooms.length === 0 ? (
+                    <div className="card shadow-sm">
+                        <div className="card-body text-center text-muted py-5">
+                            <i className="bi bi-inbox fs-1 d-block mb-3"></i>
+                            등록된 객실이 없습니다.
+                        </div>
+                    </div>
+                ) : (
+                    rooms.map((item, index) => (
+                        <div key={item.roomId} className="card shadow-sm">
+                            <div className="card-body">
+                                {/* 상단: 객실명/유형/상태 */}
+                                <div className="d-flex justify-content-between align-items-start gap-2">
+                                    <div className="flex-grow-1">
+                                        <button
+                                            type="button"
+                                            className="btn btn-link p-0 text-decoration-none fw-semibold text-start"
+                                            onClick={() => handleToDetailPage(item.roomId!)}
+                                        >
+                                            {item.name}
+                                        </button>
+                                        <div className="text-muted small">
+                                            {item.typeName}
+                                        </div>
+                                    </div>
+                                    <div className="text-nowrap">
+                                        <span className={`badge ${item.deletedYn === 'N' ? 'bg-success' : 'bg-danger'}`}>
+                                            {item.deletedYn === 'N' ? '활성' : '대기'}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* 중간: 가격/최대 인원/등록일/번호 */}
+                                <div className="mt-2 small text-muted">
+                                    최대 인원(성인) <span className="ms-1">{item.maxAdult}</span> 명
+                                    <br />
+                                    가격 <span className="ms-1">{item.price!.toLocaleString()}</span> 원
+                                </div>
+
+                                {/* 하단: 상태 변경 */}
+                                <div className="d-flex justify-content-end align-items-center mt-3">
+                                    <span className="text-muted small me-auto">
+                                        번호 <span className="ms-1">{page ? (page.pageNum - 1) * page.pageSize + index + 1 : index + 1}</span>
+                                        <br />
+                                        등록일 <span className="ms-1">{formatKST(item.createdAt)}</span>
+                                    </span>
                                     <select
-                                        className="form-select form-select-sm"
+                                        className="form-select form-select-sm w-auto"
                                         value={item.deletedYn}
                                         onChange={(e) => handleStatusChange(item.accommodationId, item.roomId, e)}
                                     >
                                         <option value="N">활성</option>
                                         <option value="Y">대기</option>
                                     </select>
-                                    <span className={`badge bg-${item.deletedYn === 'N' ? 'success' : 'danger'}`}>
-                                        {item.deletedYn === 'N' ? '활성' : '대기'}
-                                    </span>
-                                </td>
-                            </tr>
-                        )))}
-                </tbody>
-            </table>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                )}
+            </div>
 
             {/* 페이지네이션 */}
             {page && <Pagination page={page} onPageChange={handlePageChange} />}

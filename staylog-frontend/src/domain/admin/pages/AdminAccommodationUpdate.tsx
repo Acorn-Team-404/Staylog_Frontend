@@ -130,85 +130,196 @@ const AdminAccommodationUpdate: React.FC = () => {
                 </span>
             </h3>
             <form onSubmit={handleSubmit}>
-                <table className="table table-bordered">
-                    <tbody>
-                        {/* 숙소명, 유형, 지역, 주소, 체크인/아웃 등 기존 필드들 */}
-                        <tr>
-                            <th className="bg-light text-center" style={{ width: '20%' }}>숙소명</th>
-                            <td>
-                                <input type="text" className="form-control form-control-sm" value={data.name} onChange={(e) => setData({ ...data, name: e.target.value })} required />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th className="bg-light text-center">유형</th>
-                            <td>
-                                <select name="acType" className="form-select form-select-sm" value={data.acType} onChange={(e) => setData({ ...data, acType: e.target.value })} required>
-                                    {acTypeCodeList.map(item => <option key={item.codeId} value={item.codeId}>{item.codeName}</option>)}
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th className="bg-light text-center">지역</th>
-                            <td>
-                                <select name="regionCode" className="form-select form-select-sm" value={data.regionCode} onChange={(e) => setData({ ...data, regionCode: e.target.value })} required>
-                                    {regionCodeList.map(item => <option key={item.codeId} value={item.codeId}>{item.codeName}</option>)}
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th className="bg-light text-center">주소</th>
-                            <td>
-                                <div className='input-group input-group-sm'>
-                                    <input type="text" className="form-control form-control-sm" value={data.address} readOnly />
-                                    <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => setShowAddressModal(true)}>주소 검색</button>
-                                </div>
-                                <AddressSearch show={showAddressModal} onClose={() => setShowAddressModal(false)} onAddressSelect={(address, coords) => { setData({ ...data, address, latitude: coords.lat, longitude: coords.lng }); setShowAddressModal(false); }} />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th className="bg-light text-center">체크인/체크아웃</th>
-                            <td>
-                                <div className="d-flex align-items-center">
-                                    <input type="time" name="checkInTime" className="form-control form-control-sm me-2" value={data.checkInTime} onChange={(e) => setData({ ...data, checkInTime: e.target.value })} />
-                                    <span>~</span>
-                                    <input type="time" name="checkOutTime" className="form-control form-control-sm ms-2" value={data.checkOutTime} onChange={(e) => setData({ ...data, checkOutTime: e.target.value })} />
-                                </div>
-                            </td>
-                        </tr>
-                        {/* 상세 설명 (QuillEditor) */}
-                        <tr>
-                            <th className="bg-light text-center align-middle">상세 설명</th>
-                            <td>
-                                <div className="mt-1 mb-5">
-                                    <QuillEditor
-                                        key={`quill-${resetTrigger}`}
-                                        value={description}
-                                        onChange={setDescription}
-                                        style={{ height: '700px' }}
+                {/* 데스크톱: 테이블 표시 */}
+                <div className="d-none d-md-block">
+                    <table className="table table-bordered">
+                        <tbody>
+                            {/* 숙소명, 유형, 지역, 주소, 체크인/아웃 등 기존 필드들 */}
+                            <tr>
+                                <th className="bg-light text-center" style={{ width: '20%' }}>숙소명</th>
+                                <td>
+                                    <input type="text" className="form-control form-control-sm" value={data.name} onChange={(e) => setData({ ...data, name: e.target.value })} required />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th className="bg-light text-center">유형</th>
+                                <td>
+                                    <select name="acType" className="form-select form-select-sm" value={data.acType} onChange={(e) => setData({ ...data, acType: e.target.value })} required>
+                                        {acTypeCodeList.map(item => <option key={item.codeId} value={item.codeId}>{item.codeName}</option>)}
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th className="bg-light text-center">지역</th>
+                                <td>
+                                    <select name="regionCode" className="form-select form-select-sm" value={data.regionCode} onChange={(e) => setData({ ...data, regionCode: e.target.value })} required>
+                                        {regionCodeList.map(item => <option key={item.codeId} value={item.codeId}>{item.codeName}</option>)}
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th className="bg-light text-center">주소</th>
+                                <td>
+                                    <div className='input-group input-group-sm'>
+                                        <input type="text" className="form-control form-control-sm" value={data.address} readOnly />
+                                        <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => setShowAddressModal(true)}>주소 검색</button>
+                                    </div>
+                                    <AddressSearch show={showAddressModal} onClose={() => setShowAddressModal(false)} onAddressSelect={(address, coords) => { setData({ ...data, address, latitude: coords.lat, longitude: coords.lng }); setShowAddressModal(false); }} />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th className="bg-light text-center">체크인/체크아웃</th>
+                                <td>
+                                    <div className="d-flex align-items-center">
+                                        <input type="time" name="checkInTime" className="form-control form-control-sm me-2" value={data.checkInTime} onChange={(e) => setData({ ...data, checkInTime: e.target.value })} />
+                                        <span>~</span>
+                                        <input type="time" name="checkOutTime" className="form-control form-control-sm ms-2" value={data.checkOutTime} onChange={(e) => setData({ ...data, checkOutTime: e.target.value })} />
+                                    </div>
+                                </td>
+                            </tr>
+                            {/* 상세 설명 (QuillEditor) */}
+                            <tr>
+                                <th className="bg-light text-center align-middle">상세 설명</th>
+                                <td>
+                                    <div className="mt-1 mb-5">
+                                        <QuillEditor
+                                            key={`quill-${resetTrigger}`}
+                                            value={description}
+                                            onChange={setDescription}
+                                            style={{ height: '700px' }}
+                                            targetType="ACCOMMODATION"
+                                            targetId={accommodationId}
+                                        />
+                                    </div>
+                                </td>
+                            </tr>
+                            {/* 대표/갤러리 이미지 (ImageManager) */}
+                            <tr>
+                                <th className="bg-light text-center align-middle">대표/갤러리 이미지</th>
+                                <td>
+                                    <ImageManager
+                                        key={`image-manager-${resetTrigger}`}
                                         targetType="ACCOMMODATION"
                                         targetId={accommodationId}
+                                        isEditMode={true} // 수정 모드 활성화
+                                        uploadTrigger={imageUploadTrigger}
+                                        onUploadComplete={handleImageUploadComplete}
+                                        onUploadError={handleImageUploadError}
                                     />
-                                </div>
-                            </td>
-                        </tr>
-                        {/* 대표/갤러리 이미지 (ImageManager) */}
-                        <tr>
-                            <th className="bg-light text-center align-middle">대표/갤러리 이미지</th>
-                            <td>
-                                <ImageManager
-                                    key={`image-manager-${resetTrigger}`}
-                                    targetType="ACCOMMODATION"
-                                    targetId={accommodationId}
-                                    isEditMode={true} // 수정 모드 활성화
-                                    uploadTrigger={imageUploadTrigger}
-                                    onUploadComplete={handleImageUploadComplete}
-                                    onUploadError={handleImageUploadError}
-                                />
-                                {imageUploadError && <p className="text-danger mt-2">{imageUploadError}</p>}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                    {imageUploadError && <p className="text-danger mt-2">{imageUploadError}</p>}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* 모바일: 카드형 표시 */}
+                <div className="d-md-none">
+                    <hr className="my-4" />
+
+                    <div className="mb-3">
+                        <label className="form-label fw-bold">숙소명</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            value={data.name}
+                            onChange={(e) => setData({ ...data, name: e.target.value })}
+                            required
+                        />
+                    </div>
+
+                    <div className="mb-3">
+                        <label className="form-label fw-bold">유형</label>
+                        <select
+                            name="acType"
+                            className="form-select"
+                            value={data.acType}
+                            onChange={(e) => setData({ ...data, acType: e.target.value })}
+                            required
+                        >
+                            {acTypeCodeList.map(item => <option key={item.codeId} value={item.codeId}>{item.codeName}</option>)}
+                        </select>
+                    </div>
+
+                    <div className="mb-3">
+                        <label className="form-label fw-bold">지역</label>
+                        <select
+                            name="regionCode"
+                            className="form-select"
+                            value={data.regionCode}
+                            onChange={(e) => setData({ ...data, regionCode: e.target.value })}
+                            required
+                        >
+                            {regionCodeList.map(item => <option key={item.codeId} value={item.codeId}>{item.codeName}</option>)}
+                        </select>
+                    </div>
+
+                    <div className="mb-3">
+                        <label className="form-label fw-bold">주소</label>
+                        <div className='input-group'>
+                            <input type="text" className="form-control" value={data.address} readOnly />
+                            <button type="button" className="btn btn-outline-secondary" onClick={() => setShowAddressModal(true)}>
+                                주소 검색
+                            </button>
+                        </div>
+                        <AddressSearch
+                            show={showAddressModal}
+                            onClose={() => setShowAddressModal(false)}
+                            onAddressSelect={(address, coords) => {
+                                setData({ ...data, address, latitude: coords.lat, longitude: coords.lng });
+                                setShowAddressModal(false);
+                            }}
+                        />
+                    </div>
+
+                    <div className="mb-5">
+                        <label className="form-label fw-bold">체크인/체크아웃</label>
+                        <div className="d-flex align-items-center gap-2">
+                            <input
+                                type="time"
+                                name="checkInTime"
+                                className="form-control"
+                                value={data.checkInTime}
+                                onChange={(e) => setData({ ...data, checkInTime: e.target.value })}
+                            />
+                            <span>~</span>
+                            <input
+                                type="time"
+                                name="checkOutTime"
+                                className="form-control"
+                                value={data.checkOutTime}
+                                onChange={(e) => setData({ ...data, checkOutTime: e.target.value })}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="mb-3 pb-5">
+                        <label className="form-label fw-bold">상세 설명</label>
+                        <QuillEditor
+                            key={`quill-${resetTrigger}`}
+                            value={description}
+                            onChange={setDescription}
+                            style={{ height: '500px' }}
+                            targetType="ACCOMMODATION"
+                            targetId={accommodationId}
+                        />
+                    </div>
+
+                    <div className="mb-3 pt-5">
+                        <label className="form-label fw-bold">대표/갤러리 이미지</label>
+                        <ImageManager
+                            key={`image-manager-${resetTrigger}`}
+                            targetType="ACCOMMODATION"
+                            targetId={accommodationId}
+                            isEditMode={true}
+                            uploadTrigger={imageUploadTrigger}
+                            onUploadComplete={handleImageUploadComplete}
+                            onUploadError={handleImageUploadError}
+                        />
+                        {imageUploadError && <p className="text-danger mt-2">{imageUploadError}</p>}
+                    </div>
+                </div>
+
                 <div className="d-flex justify-content-end mt-3">
                     <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
                         {isSubmitting ? '수정 중...' : '수정 완료'}

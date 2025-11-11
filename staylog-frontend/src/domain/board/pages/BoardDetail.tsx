@@ -181,7 +181,7 @@ function BoardDetail() {
 
 
         {/* 게시글 내용 */}
-        <div dangerouslySetInnerHTML={{ __html: dto?.content || "" }} className="mt-5 mb-5" />
+        <div dangerouslySetInnerHTML={{ __html: dto?.content || "" }} className="board-content mt-5 mb-5" />
 
         {/* 별점 - 리뷰에서만 보기 */}
         {boardType === "review" && (

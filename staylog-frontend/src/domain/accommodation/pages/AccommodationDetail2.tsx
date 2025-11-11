@@ -14,15 +14,13 @@ import KakaoMap from '../components/KakaoMap';
 import AccommodationInfo from '../components/AccommodationInfo';
 import { createBooking } from '../../booking/api';
 import type { CreateBookingRequest } from '../../booking/types';
-import { formatDateToYYYYMMDD } from '../../../global/utils/date';
-import ImageCarousel from '../../../global/components/ImageCarousel';
 
 /*
     Carousel : 숙소 대표 이미지
     Accordion : 클릭 시 펼쳐지는 기능
 */
 
-function AccommodationDetail() {
+function AccommodationDetail2() {
   // 예비용 이미지
   const img1 = "https://picsum.photos/2100/900"; // 21:9 비율
   const img2 = "https://picsum.photos/2100/900/?grayscale";
@@ -121,11 +119,17 @@ function AccommodationDetail() {
   // 예약하기 버튼 클릭 핸들러
   const handleReserve = async (bookingData: BookingData) => {
     try {
+      // Date를 "YYYY-MM-DD" 문자열로 변환
+      const formatDate = (date: Date | null) => {
+        if (!date) return '';
+        return date.toISOString().split('T')[0];
+      };
+
       // 예약 생성 요청 데이터 구성
       const request: CreateBookingRequest = {
         roomId: bookingData.roomId,
-        checkIn: bookingData.checkInStr,
-        checkOut: bookingData.checkOutStr,
+        checkIn: formatDate(bookingData.checkIn),
+        checkOut: formatDate(bookingData.checkOut),
         amount: bookingData.totalPrice,
         adults: bookingData.adults,
         children: bookingData.children,
@@ -149,23 +153,27 @@ function AccommodationDetail() {
     setBookingSelectedRoom(data.rooms[0]);
   }, [data]);
 
-  // 선택된 객실이 바뀔 때마다 블락 날짜 조회
+  //블락날짜 조회 이걸로 바꾸기
   useEffect(() => {
     if (!bookingSelectedRoom) return;
-
     const today = new Date();
     const to = new Date();
     to.setMonth(today.getMonth() + 2);
 
+    const fromStr = today.toISOString().split("T")[0];
+    const toStr = to.toISOString().split("T")[0];
+
+
     api.get<string[]>(`/v1/${bookingSelectedRoom.roomId}/blocked`, {
-      params: {
-        from: formatDateToYYYYMMDD(today),
-        to: formatDateToYYYYMMDD(to),
-      },
+      params:  { from: fromStr, to: toStr },
     })
       .then(res => setBlockedDates(res))
       .catch(() => setBlockedDates([]));
-  }, [bookingSelectedRoom]);
+  }, [bookingSelectedRoom?.roomId]);
+
+
+
+
 
   // 숙소 ID 가 없다면
   if (!accommodationId) {
@@ -189,16 +197,16 @@ function AccommodationDetail() {
 
   // 전체 화면 너비 사용 : Container fluid
   return <>
-    
     {/* 숙소 대표 이미지 영역 */}
-    <div className="accommodationImages ratio mb-3">
-      <ImageCarousel
-        targetType='ACCOMMODATION'
-        targetId={accommodationId}
-        aspectRatio='21:9'
-        rounded={true}
-        arrowsOnHover={true}
-      />
+    <div className="accommodationImages images-slider ratio ratio-21x9 mb-3">
+      <Carousel className="w-100 h-100">
+        <Carousel.Item>
+          <img src={img1} alt="숙소 이미지 1" className="carousel-img" />
+        </Carousel.Item>
+        <Carousel.Item>
+          <img src={img2} alt="숙소 이미지 2" className="carousel-img" />
+        </Carousel.Item>
+      </Carousel>
     </div>
 
     <Container className="p-0 accommodationAll">
@@ -238,8 +246,21 @@ function AccommodationDetail() {
               {/* 숙소 상세 소개 */}
               <div className="accommodationDetail mb-5" id="summary">
                 <h5 className="mb-3">숙소 소개</h5>
-                {/* Quill 에디터로 등록한 가진과 내용을 출력 (html 요소 빼고) */}
-                <p dangerouslySetInnerHTML={{ __html: data.description }} />
+                <div className="detailImages">
+                  <Image
+                    src="https://placehold.co/100x500/F0F3F7/99AAB5"
+                    className="mb-3"
+                    fluid
+                    style={{ objectFit: "cover", width: "100%", height: "31rem" }}
+                  />
+                  <Image
+                    src="https://placehold.co/100x500/F0F3F7/99AAB5"
+                    className="mb-3"
+                    fluid
+                    style={{ objectFit: "cover", width: "100%", height: "31rem" }}
+                  />
+                </div>
+                <p style={{ fontSize: "0.85rem" }}>{data.description}</p>
               </div>
 
               {/* 해당 숙소 객실 목록 컴포넌트 */}
@@ -260,7 +281,7 @@ function AccommodationDetail() {
                 {data.reviews && data.reviews.length > 0 ? (
                   <ReviewList reviews={data.reviews.slice(0, 7)} accommodationId={Number(accommodationId)} />
                 ) : (
-                  <div className="placeholder-box mt-3"><p>등록된 리뷰가 없습니다</p></div>
+                  <div className="placeholder-box"><p>등록된 리뷰가 없습니다</p></div>
                 )}
               </div>
 
@@ -336,4 +357,4 @@ function AccommodationDetail() {
   </>
 }
 
-export default AccommodationDetail;
+export default AccommodationDetail2;

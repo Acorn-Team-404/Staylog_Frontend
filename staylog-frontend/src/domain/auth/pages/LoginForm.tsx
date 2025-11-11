@@ -132,7 +132,7 @@ function LoginForm({ onClose }: LoginFormProps = {}) {
       <div className="login-form-container">
         {/* 제목 섹션 */}
         <div className="login-header">
-          <h1 className="login-title">LOGIN</h1>
+          <h1 className="login-title fs-3 fw-normal text-dark" style={{ letterSpacing: '0.4rem' }}>LOGIN</h1>
           <p className="login-subtitle">로그인</p>
           <div className="login-divider"></div>
         </div>

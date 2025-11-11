@@ -48,20 +48,23 @@ function onNavigate() {
         break;
 
       case "Reservation":
-        // TODO: 예약 확정 알림 클릭 시 로직
-        break;
-        
-      case "Refund":
-        // TODO: 예약 취소 알림 클릭 시 로직
-        break;
-        
-      case "Review": // 리뷰글 작성 알림
-        navigate(`/review/${targetId}`)
+        navigate(`/mypage/reservations`)
         onClose()
         break;
         
-      case "Comment":
-        // TODO: 댓글 작성 알림 클릭 시 로직
+      case "Refund":
+        navigate(`/mypage/reservations`)
+        onClose()
+        break;
+        
+      case "Review": // 리뷰글 작성 알림
+        navigate(`/board/${targetId}`)
+        onClose()
+        break;
+        
+      case "Comment": // 댓글 작성 알림
+        navigate(`/board/${targetId}`)
+        onClose()
         break;
         
       case "Signup": // 회원가입 알림

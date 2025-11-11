@@ -5,13 +5,15 @@ import { Card, Row, Col, Button, Image } from 'react-bootstrap';
 interface RoomListProps {
   rooms: AccommodationRoomListType[];
   onSelect: (room: AccommodationRoomListType) => void;
+  currentRoomId?: number; 
 }
 
-const RoomList = ({ rooms, onSelect }: RoomListProps) => {
+const RoomList2 = ({ rooms, onSelect, currentRoomId}: RoomListProps) => {
 
+  const filteredRooms = rooms.filter(room => room.roomId !== currentRoomId);
   return <>
     <div>
-      {rooms.map(room => (
+      {filteredRooms.map(room => (
         <Card key={room.roomId} className="mb-4 shadow-sm border-0" onClick={() => onSelect(room)}
           style={{ cursor: "pointer", overflow: "hidden", borderRadius: "0.3rem" }}>
           <Row className="g-0 align-items-stretch">
@@ -56,4 +58,4 @@ const RoomList = ({ rooms, onSelect }: RoomListProps) => {
   </>
 };
 
-export default RoomList;
+export default RoomList2;

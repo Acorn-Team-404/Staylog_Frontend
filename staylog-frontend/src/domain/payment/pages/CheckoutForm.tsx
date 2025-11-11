@@ -8,6 +8,7 @@ import {
    ListGroup,
    InputGroup // 쿠폰 버튼을 위해 추가
 } from 'react-bootstrap';
+import { loadTossPayments } from '@tosspayments/payment-sdk';
 import Modal from '../../../global/components/Modal';
 import type { ModalMode } from '../../../global/types';
 import { useModal } from '../../../global/hooks/useModal';
@@ -17,31 +18,30 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import type { BookingDetailResponse } from '../../booking/types';
 import { preparePayment } from '../api';
 import type { PreparePaymentRequest } from '../types';
-import useGetUserIdFromToken from '../../auth/hooks/useGetUserIdFromToken';
 import useGetNicknameFromToken from '../../auth/hooks/useGetNicknameFromToken';
 import useCommonCodeSelector from '../../common/hooks/useCommonCodeSelector';
 
 /**
- * 백엔드 결제 수단 코드를 Toss Payments SDK v1 결제 수단으로 매핑
+ * 백엔드 결제 수단 코드를 Toss Payments SDK v2 결제 수단으로 매핑
  *
- * ⚠️ 중요: Toss Payments SDK v1은 한글 결제 수단명을 사용합니다!
- * https://docs.tosspayments.com/guides/v1/payment-widget
+ * ⚠️ 중요: Toss Payments SDK v2는 영문 대문자 코드를 사용합니다!
+ * https://docs.tosspayments.com/guides/v2/payment-window
  *
- * @param method - 백엔드 결제 수단 코드 (PAY_CARD, PAY_VIRTUAL_ACCOUNT, PAY_BANK_TRANSFER, PAY_KAKAOPAY 등)
- * @returns Toss Payments SDK v1 결제 수단 ('카드', '가상계좌', '계좌이체', '휴대폰', '간편결제')
+ * @param method - 백엔드 결제 수단 코드 (PAY_CARD, PAY_VIRTUAL_ACCOUNT 등)
+ * @returns Toss Payments SDK v2 결제 수단 ('CARD', 'VIRTUAL_ACCOUNT', 'TRANSFER' 등)
  */
 function mapPaymentMethodToToss(method: string): string {
    const mapping: Record<string, string> = {
-      'PAY_CARD': '카드',                    // 신용/체크카드
-      'PAY_VIRTUAL_ACCOUNT': '가상계좌',      // 가상계좌
-      'PAY_BANK_TRANSFER': '계좌이체',        // 계좌이체
-      'PAY_KAKAOPAY': '카카오페이',            // 간편결제
-      'PAY_NAVERPAY': '네이버페이',            // 간편결제
-      'PAY_TOSS': '토스페이',                  // 간편결제
-      'PAY_EASY': '간편결제',                 // 간편결제 (일반)
-      'PAY_MOBILE': '휴대폰',                 // 휴대폰결제
+      'PAY_CARD': 'CARD',                        // 신용/체크카드
+      '가상계좌': 'VIRTUAL_ACCOUNT',  // 가상계좌
+      'PAY_BANK_TRANSFER': 'TRANSFER',           // 실시간 계좌이체
+      'PAY_KAKAOPAY': 'KAKAOPAY',                // 간편결제
+      'PAY_NAVERPAY': 'NAVERPAY',                // 간편결제
+      'PAY_TOSS': 'TOSSPAY',                     // 간편결제
+      'PAY_EASY': 'EASY_PAY',                    // 간편결제 (일반)
+      'PAY_MOBILE': 'MOBILE',                    // 휴대폰결제
    };
-   return mapping[method] || '카드'; // 기본값: 카드
+   return mapping[method] || 'CARD'; // 기본값: CARD
 }
 
 function CheckoutForm() {
@@ -166,29 +166,21 @@ function CheckoutForm() {
 
          console.log('[API 응답] /v1/payments/prepare', prepareResponse);
 
-         // Toss SDK 연동
-         // @ts-ignore
-         const tossPayments = window.TossPayments || null;
+         // Toss Payments SDK v2 로드 (npm 패키지)
+         console.log('[Toss SDK v2] loadTossPayments 호출 시작');
+         const tossPayments = await loadTossPayments(prepareResponse.clientKey);
+         console.log('[Toss SDK v2] 초기화 완료, clientKey:', prepareResponse.clientKey?.substring(0, 20) + '...');
 
-         if (!tossPayments) {
-            alert('결제 모듈 로딩 실패. 페이지를 새로고침해주세요.');
-            setIsProcessing(false);
-            return;
-         }
-
-         console.log('[Toss SDK] TossPayments 로드 완료');
-
-         // Toss Payments 초기화
-         const toss = tossPayments(prepareResponse.clientKey);
-
-         console.log('[Toss SDK] 초기화 완료, clientKey:', prepareResponse.clientKey?.substring(0, 20) + '...');
-
-         // 백엔드 결제 수단 코드를 Toss API 형식으로 변환
+         // 백엔드 결제 수단 코드를 Toss v2 API 형식으로 변환
          const tossPaymentMethod = mapPaymentMethodToToss(paymentMethod);
 
-         // 결제 요청 옵션 구성
-         const paymentOptions: any = {
-            amount: prepareResponse.amount, // 백엔드가 계산한 최종 금액 (쿠폰 할인 적용 후)
+         console.log('🔍 [디버깅] paymentMethod:', paymentMethod);
+         console.log('🔍 [디버깅] tossPaymentMethod:', tossPaymentMethod);
+
+         // v2 결제 요청 파라미터 구성
+         const requestParams: any = {
+            method: tossPaymentMethod,                    // 'CARD', 'VIRTUAL_ACCOUNT' 등
+            amount: prepareResponse.amount,               // 숫자로 전달
             orderId: prepareResponse.orderId,
             orderName: `${booking.accommodationName} - ${booking.roomName}`,
             customerName: prepareResponse.customerName,
@@ -196,18 +188,15 @@ function CheckoutForm() {
             failUrl: `${window.location.origin}/#/checkout`,
          };
 
-         // 가상계좌인 경우 추가 옵션
-         if (paymentMethod === 'PAY_VIRTUAL_ACCOUNT') {
-            paymentOptions.validHours = 24; // 입금 유효 시간 (24시간)
+         // 가상계좌인 경우 validHours 추가
+         if (paymentMethod === 'VIRTUAL_ACCOUNT') { mapPaymentMethodToToss
+            requestParams.validHours = 24;  // 입금 유효 시간 (24시간)
          }
 
-         console.log('[Toss SDK] requestPayment 호출', {
-            method: tossPaymentMethod,
-            options: paymentOptions,
-         });
+         console.log('[Toss SDK v2] requestPayment 호출', JSON.stringify(requestParams, null, 2));
 
-         // 결제 수단에 따라 Toss Payments API 호출
-         await toss.requestPayment(tossPaymentMethod, paymentOptions);
+         // Toss Payments v2 결제 요청
+         await tossPayments.requestPayment(requestParams);
 
          console.log('[Toss SDK] requestPayment 완료 (successUrl로 리다이렉트됨)');
          
@@ -303,10 +292,10 @@ function CheckoutForm() {
 
                         {/* 가상계좌 */}
                         <Button
-                           variant={paymentMethod === 'PAY_VIRTUAL_ACCOUNT' ? 'primary' : 'outline-secondary'}
+                           variant={paymentMethod === 'VIRTUAL_ACCOUNT' ? 'primary' : 'outline-secondary'}
                            size="lg"
                            className="text-start py-3"
-                           onClick={() => setPaymentMethod('PAY_VIRTUAL_ACCOUNT')}
+                           onClick={() => setPaymentMethod('VIRTUAL_ACCOUNT')}
                         >
                            가상계좌
                         </Button>

@@ -34,7 +34,7 @@ interface Props {
                 onClick={() => toggleRegion(region.codeId)}
               >
                 {region.codeName}
-                {isSelected && <i className="bi bi-check ms-2"></i>}
+                {isSelected && <i className="bi ms-2"></i>}
               </li>
             );
           })}
