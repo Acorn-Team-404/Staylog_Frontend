@@ -128,10 +128,10 @@ function Navbar() {
                         <span className="fw-semibold">{nickname}</span>
 
                         {/* 아이콘 + 마이페이지 드롭다운 통합 */}
-                           <li className="nav-item">
-                              {/* profileImage prop 전달 */}
-                              <MypageDropdown onClose={() => {}} profileImage={profileImage} />
-                           </li>
+                        <li className="nav-item">
+                           {/* profileImage prop 전달 */}
+                           <MypageDropdown onClose={() => {}} profileImage={profileImage} />
+                        </li>
 
                         {/* 알림 아이콘 (로그인 시만 표시하기) */}
                         <li onClick={openNoti} className="nav-item position-relative" style={{ cursor: 'pointer' }}>
