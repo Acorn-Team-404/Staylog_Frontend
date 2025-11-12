@@ -71,7 +71,7 @@ function MyPageLayout() {
    }
 
    return (
-      <Container fluid className="pb-5 px-lg-5">
+      <Container fluid className="pb-5 px-lg-0" style={{maxWidth: "1100px"}}>
          {/* 상단 인삿말 영역 */}
          <Card className="shadow-sm border-0 w-100 mb-4">
             <Card.Body className="p-4">
@@ -119,7 +119,7 @@ function MyPageLayout() {
          {/* PC 및 모바일 공통 레이아웃 */}
          <Row>
             {/* PC용 사이드바 (lg 사이즈 이상에서 보임) */}
-            <Col lg={2} className="d-none d-lg-block">
+            <Col lg={2} className="d-none d-lg-block px-0">
                <Card className="shadow-sm border-0">
                   <h5 className="fw-bold text-center py-3 border-bottom mb-0">마이페이지</h5>
                   <ul className="nav flex-column">
@@ -135,7 +135,7 @@ function MyPageLayout() {
             </Col>
 
             {/* 오른쪽 콘텐츠 영역 */}
-            <Col lg={10}>
+            <Col lg={10} className="px-0">
                <Outlet />  
             </Col>
          </Row>

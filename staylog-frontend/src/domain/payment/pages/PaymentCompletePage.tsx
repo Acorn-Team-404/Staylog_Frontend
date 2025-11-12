@@ -12,7 +12,7 @@ function PaymentCompletePage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   /* 결제가 잘 됐는지 결제 정보를 저장하는 상태 */
-  const [paymentResult, setPaymentResult] = useState<PaymentResultResponse | null>(null); 
+  const [paymentResult, setPaymentResult] = useState<PaymentResultResponse | null>(null);
   /* 결제 완료시 선택한 옵션 보여주는 상세 정보*/
   const [booking, setBooking] = useState<BookingDetailResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -90,16 +90,17 @@ function PaymentCompletePage() {
 
     processPayment();
   }, [paymentKey, orderId, amount]);
-
+  
   useEffect(() => {
-  // 결제 성공 or 실패가 끝나면 URL 정리
-  if (!loading) {
-    if (window.history.replaceState) {
-      const cleanUrl = window.location.origin + window.location.pathname;
-      window.history.replaceState({}, document.title, cleanUrl);
-    }
+    // 결제 후 URL 정리
+    if (!loading) {
+      if (window.history.replaceState) {
+        const cleanUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+      }
     }
   }, [loading]);
+
   // 로딩 중
   if (loading) {
     return (

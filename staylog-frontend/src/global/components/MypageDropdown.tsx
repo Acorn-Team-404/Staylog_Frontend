@@ -1,19 +1,20 @@
 // src/global/components/MypageDropdown.tsx
-import { Dropdown } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useRef, useState } from "react"; // useState, useRef 훅 import
+import { Dropdown, Image } from "react-bootstrap";
 import { useDispatch } from "react-redux"; // Redux 디스패치 훅 import
+import { useNavigate } from "react-router-dom";
 import { logout } from "../../domain/auth/api"; // 로그아웃 API 함수 import
+import useMediaQuery from "../hooks/useMediaQuery"; // useMediaQuery 훅 import
+import { useModal } from "../hooks/useModal";
 import type { ModalMode } from "../types";
 import Modal from "./Modal";
-import { useModal } from "../hooks/useModal";
-import { useState, useRef } from "react"; // useState, useRef 훅 import
-import useMediaQuery from "../hooks/useMediaQuery"; // useMediaQuery 훅 import
 
 interface MypageDropdownProps {
   onClose: () => void; // Navbar.tsx 에서 넘겨준 onClose 받는다.
+  profileImage: string | null | undefined; // 프로필 이미지 URL prop 추가
 }
 
-function MypageDropdown({ onClose }: MypageDropdownProps) {
+function MypageDropdown({ onClose, profileImage }: MypageDropdownProps) {
     const navigate = useNavigate();
     const dispatch = useDispatch(); // Redux 디스패치 훅 사용
     const [showDropdown, setShowDropdown] = useState(false); // 드롭다운 표시 상태 관리
@@ -110,7 +111,11 @@ function MypageDropdown({ onClose }: MypageDropdownProps) {
                     id="mypage-dropdown"
                     className="border-0 bg-transparent p-0"
                 >
-                    <i className="bi bi-person-circle" style={{ fontSize: "32px" }}></i>
+                    {profileImage ? (
+                        <Image src={profileImage} roundedCircle width="32" height="32" alt="Profile"/>
+                    ) : (
+                        <i className="bi bi-person-circle" style={{ fontSize: "32px" }}></i>
+                    )}
                 </Dropdown.Toggle>
 
                 {/* react-bootstrap이 자동으로 아이콘 기준 위치를 움직이게 함*/}

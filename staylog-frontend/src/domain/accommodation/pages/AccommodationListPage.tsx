@@ -5,10 +5,11 @@ import AccommodationCard from '../components/AccommodationCard';
 import SortModal from '../../../global/components/SortModal';
 import type { SortOption } from '../../../global/components/SortModal';
 import { searchAccommodations } from '../../search/api';
-import type { AccommodationListItem } from '../types';
+
 import type { SearchAccommodationsRequest } from '../../search/types';
 import useCommonCodeSelector from '../../common/hooks/useCommonCodeSelector';
 import useInfiniteScroll from '../hooks/useInfiniteScroll';
+import type { AccommodationSearchListItem } from '../types/AccommodationType';
 
 function AccommodationListPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -36,7 +37,7 @@ function AccommodationListPage() {
   }, [sortCodeList]);
 
   // 상태
-  const [accommodations, setAccommodations] = useState<AccommodationListItem[]>([]);
+  const [accommodations, setAccommodations] = useState<AccommodationSearchListItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);

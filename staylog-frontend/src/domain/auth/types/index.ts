@@ -29,7 +29,7 @@ export interface UserInfo {
   userId: number;
   loginId: string;
   nickname: string;
-  // profileImage?: string;
+  profileImage?: string;
   role: string;
 }
 

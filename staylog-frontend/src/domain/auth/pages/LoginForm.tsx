@@ -1,14 +1,14 @@
 import React, { useState, type FormEvent } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { login } from '../api';
-import type { LoginRequest } from '../types';
-import { MessageUtil } from '../../../global/utils/messageUtil';
+import { useDispatch } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ErrorCode } from '../../../global/constants/ResponseCode';
 import { VALIDATION_MESSAGES } from '../../../global/constants/messages';
 import type { ErrorResponse } from '../../../global/types/api';
+import { MessageUtil } from '../../../global/utils/messageUtil';
+import { login } from '../api';
+import type { LoginRequest } from '../types';
 import './LoginForm.css';
-import { useDispatch } from 'react-redux';
-import type { UserInfo } from '../../../global/store/types';
+import type { UserInfo } from '../types/index';
 
 interface LoginFormProps {
   onClose?: () => void; // 모달에서 사용시 로그인 성공 후 콜백

@@ -30,6 +30,12 @@ function reducer(state: RootState = initState, action: AppAction): RootState {
          if (!state.userInfo) return state; // userInfo가 null이면 아무 작업 안함
          return { ...state, userInfo: { ...state.userInfo, nickname: action.payload, }
          };
+      // 프로필 이미지만 즉시 업데이트
+      case 'UPDATE_PROFILE_IMAGE':
+         if (!state.userInfo) return state;
+         return { ...state, userInfo: { ...state.userInfo, profileImage: action.payload }
+      };
+      
       case 'SET_TOKEN':
          return { ...state, token: action.payload };
       case 'SET_COMMON_CODES':

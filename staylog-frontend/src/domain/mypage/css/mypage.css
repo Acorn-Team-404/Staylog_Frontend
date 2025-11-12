@@ -1,16 +1,12 @@
 /* src/domain/mypage.css */
-.container {
-  max-width: 1000px;
-}
-
-h2 {
+/* h2 {
   font-weight: 700;
 }
 
 .card {
   border-radius: 12px;
   border: 1px solid #eee;
-}
+} */
 
 /* PC (lg) 화면 이상에서만 적용되는 스타일 */
 /* src/domain/mypage.css */

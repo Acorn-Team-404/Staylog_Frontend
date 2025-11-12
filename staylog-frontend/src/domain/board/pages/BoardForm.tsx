@@ -335,7 +335,8 @@ function BoardForm() {
               {/* 내용 */}
               {dto.boardId > 0 && (
               <Form.Group className="mb-4">
-                <Form.Label className="fw-semibold">내용</Form.Label>   
+                <Form.Label className="fw-semibold">내용</Form.Label>
+                  <div className="mb-5">
                   <QuillEditor
                     key={`board-quill-${dto.boardId}`}
                     value={dto.content ?? ""}
@@ -344,20 +345,25 @@ function BoardForm() {
                     targetId={dto.boardId}
                     style={{ height: "600px" }}
                   />
-                   
+                  </div>
+                  
                 </Form.Group>
               )}
 
-                {dto.boardId > 0 && (
-                <ImageManager
-                    key={`image-manager-${resetTrigger}`}
-                    targetType={apiBoardType}
-                    targetId={dto.boardId}
-                    isEditMode={true} // 수정 모드 활성화
-                    uploadTrigger={imageUploadTrigger}
-                    onUploadComplete={handleImageUploadComplete}
-                    onUploadError={handleImageUploadError}
-                />
+                {dto.boardId > 0 && boardType === "journal" && (
+                <div className="mb-3 mt-5 mt-md-4 pt-md-4 mt-lg-0 pt-lg-0">
+                  <div className="fw-semibold mt-4 mb-2 pt-5 pt-md-1">저널 대표 이미지 (최대 5장)</div>
+                  <ImageManager
+                      key={`image-manager-${resetTrigger}`}
+                      targetType={apiBoardType}
+                      targetId={dto.boardId}
+                      isEditMode={true} // 수정 모드 활성화
+                      uploadTrigger={imageUploadTrigger}
+                      onUploadComplete={handleImageUploadComplete}
+                      onUploadError={handleImageUploadError}
+                      maxImages={5}
+                  />
+                </div>
                 )}
 
                 {imageUploadError && <p className="text-danger mt-2">{imageUploadError}</p>}

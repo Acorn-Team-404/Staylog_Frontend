@@ -17,7 +17,7 @@ export interface AccommodationListItem {
   maxCapacity: number;
   basePrice: number;
   reservationCount: number;
-  mainImg: string[];  // 대표 이미지 배열 (캐러셀용)
+  imageUrl: string;  // 대표 이미지 배열 (캐러셀용)
 }
 
 // 인원 수 정보

@@ -137,7 +137,7 @@ function ReviewSection() {
         <div className="d-none d-lg-block">
             <Table bordered hover responsive className="align-middle text-center">
                 <thead className="table-light">
-                    <tr>
+                    <tr className="text-nowrap">
                         <th>예약 번호</th>
                         <th>숙소명</th>
                         <th>제목</th>

@@ -7,8 +7,8 @@ export interface UserInfo {
    userId: number;
    loginId: string;
    nickname: string;
+   profileImage: string | null | undefined
    role:string;
-   // profileImage: string | null
 }
 
 // 닉네임 업데이트 액션 
@@ -17,6 +17,12 @@ export interface UpdateNicknameAction {
    type: 'UPDATE_NICKNAME';
    payload: string; // 변경된 닉네임
 }
+
+// 프로필 이미지 업데이트 액션
+export interface UpdateProfileImageAction {
+   type: 'UPDATE_PROFILE_IMAGE';
+   payload: string | null | undefined ; // 새로운 프로필 이미지 URL
+}   
 
 // Redux store에 저장되는 모든 데이터를 정의하는 마스터 설계도
 // Redux는 모든 전역 상태를 단 하나의 큰 객체인 RootState 안에 저장한다.
@@ -122,4 +128,5 @@ export type AppAction =
    | DeleteNotificationAction
    | DeleteNotificationAllAction
    | MarkOneAsReadAction
-   | UpdateNicknameAction; //사람아이콘 왼쪽의 닉네임 업데이트 추가
+   | UpdateNicknameAction //사람아이콘 왼쪽의 닉네임 업데이트 추가
+   | UpdateProfileImageAction; // 프로필 이미지 업데이트 액션 추가

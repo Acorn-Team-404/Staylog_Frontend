@@ -1,0 +1,47 @@
+/* 모바일 전용 */
+.sl-bottom-tab {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 60px;
+  background: #fff;
+  border-top: 1px solid #e5e5ea;
+  padding-bottom: env(safe-area-inset-bottom);
+  z-index: 1030;
+  display: block;
+}
+@media (min-width: 768px) {
+  .sl-bottom-tab { display: none; }
+}
+
+/* 5개 기본 */
+.sl-tab-grid {
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: stretch;
+}
+
+.sl-tab {
+  appearance: none;
+  background: none;
+  border: 0;
+  width: 100%; height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  color: #2c2c2c;
+  font-size: 12px;
+}
+
+.sl-tab i {
+  font-size: 20px;
+  line-height: 1;
+}
+
+
+@media (max-width: 360px) {
+  .sl-tab i { font-size: 18px; }
+  .sl-tab { font-size: 11px; }
+}

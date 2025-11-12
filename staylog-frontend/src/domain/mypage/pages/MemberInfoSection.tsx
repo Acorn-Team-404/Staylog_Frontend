@@ -26,6 +26,7 @@ function MemberInfoSection() {
     const [member, setMember] = useState<MemberInfo | null>(null); // 회원정보 상태
     const [editMode, setEditMode] = useState(false); // 전체 수정 모드 상태
     const [previewUrl, setPreviewUrl] = useState<string | null>(null); // 업로드 시 미리보기 이미지
+    const [newProfileImageUrl, setNewProfileImageUrl] = useState<string | null>(null); // 새로 업로드된 이미지 URL을 임시 저장
     const [selectedFileName, setSelectedFileName] = useState<string>(""); // 선택된 파일명 표시
 
     // 비밀번호 변경 관련 상태
@@ -216,10 +217,13 @@ function MemberInfoSection() {
             setSelectedFileName(file.name); //파일명 저장
         try {
             // 실제 서버(Spring) 업로드
-            const imageUrl = await uploadProfileImage(file, userId); // 업로드 요청 (userId 뒤에 ! 빼기)
-            // 업로드 완료 후 DB에 저장될 URL을 상태로 반영
-            setMember((prev) => (prev ? { ...prev, profileImageUrl: imageUrl } : prev)); // UI 반영
-            console.log("프로필 이미지 업로드 완료:", imageUrl);
+            const imageUrl = await uploadProfileImage(file, userId); // 업로드 요청
+            // 업로드 완료 후 DB에 저장될 새로 받은 URL을 임시 상태에 저장
+            setNewProfileImageUrl(imageUrl);
+            // setMember((prev) => (prev ? { ...prev, profileImageUrl: imageUrl } : prev)); // UI 반영
+            // Redux 전역 상태에도 프로필 이미지 업데이트 (프로필 이미지가 변경될 때마다 Redux 전역 상태도 함께 업데이트)
+            // dispatch({ type: 'UPDATE_PROFILE_IMAGE', payload: imageUrl });
+            console.log("프로필 이미지 업로드 완료, 임시 저장:", imageUrl);
         } catch (err) {
             console.error("이미지 업로드 실패:", err);
             alert("이미지 업로드 중 오류가 발생했습니다.");
@@ -249,6 +253,7 @@ function MemberInfoSection() {
             nickname: editModeNickname ? nicknameInput : member.nickname,
             birthDate: birthDate || "",
             password: showPasswordInput && passwordInput1 ? passwordInput1 : "", // 비밀번호 변경 사항 반영
+            profileImage: newProfileImageUrl || member.profileImage, // 새로 업로드된 이미지가 있으면 새로 업로드된 이미지로, 없으면 기존 이미지로 반영
         };
         console.log("update payload:", payload); 
 
@@ -261,6 +266,12 @@ function MemberInfoSection() {
 
             // Redux 전역 상태 업데이트 (Navbar 닉네임 즉시 반영)
             dispatch({ type: "UPDATE_NICKNAME", payload: updatedData.nickname } as AppAction);
+            // 새로 업로드된 프로필 이미지가 있다면 Redux 상태에도 반영 
+            // MypageDropdown에서 전달받은 profileImage 값의 유무에 따라 프로필 이미지 또는 기본 아이콘을 조건부로 렌더링 (refresh 하더라도 프로필사진 Navbar에 유지)
+            if (newProfileImageUrl) {
+                dispatch({ type: 'UPDATE_PROFILE_IMAGE', payload: newProfileImageUrl });
+                setNewProfileImageUrl(null); // 임시 상태 초기화
+            }    
             // 저장 완료 모달 표시
             setShowModal(true); 
             // 상태 초기화
@@ -623,7 +634,7 @@ function MemberInfoSection() {
                     className="border rounded-circle mx-auto d-flex justify-content-center align-items-center bg-light overflow-hidden"
                     style={{ width: "130px", height: "130px" }}>
                     <Image 
-                        onClick={() => document.getElementById("formFile")?.click()} 
+                        onClick={() => document.getElementById("formFile")?.click()} style={{ width: "100%", height: "100%", objectFit: "cover" }}
                         src={previewUrl || member.profileImage || "https://cdn-icons-png.flaticon.com/512/847/847969.png"} alt="profile image" roundedCircle fluid/>
                 </div>
                 <p className="text-muted mt-2 mb-1">프로필 사진</p>
