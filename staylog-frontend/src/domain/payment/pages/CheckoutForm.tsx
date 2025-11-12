@@ -274,65 +274,6 @@ function CheckoutForm() {
                   </Card.Body>
                </Card>
 
-               {/* ----- 결제 수단 ----- */}
-               <Card className="mb-4">
-                  <Card.Header as="h5">결제 수단 선택</Card.Header>
-                  <Card.Body>
-                     {/* 결제 수단 버튼 (세로 나열) */}
-                     <div className="d-grid gap-3">
-                        {/* 카드 결제 */}
-                        <Button
-                           variant={paymentMethod === 'PAY_CARD' ? 'primary' : 'outline-secondary'}
-                           size="lg"
-                           className="text-start py-3"
-                           onClick={() => setPaymentMethod('PAY_CARD')}
-                        >
-                           카드 결제
-                        </Button>
-
-                        {/* 가상계좌 */}
-                        <Button
-                           variant={paymentMethod === 'VIRTUAL_ACCOUNT' ? 'primary' : 'outline-secondary'}
-                           size="lg"
-                           className="text-start py-3"
-                           onClick={() => setPaymentMethod('VIRTUAL_ACCOUNT')}
-                        >
-                           가상계좌
-                        </Button>
-
-                        {/* 계좌이체 */}
-                        <Button
-                           variant={paymentMethod === 'PAY_BANK_TRANSFER' ? 'primary' : 'outline-secondary'}
-                           size="lg"
-                           className="text-start py-3"
-                           onClick={() => setPaymentMethod('PAY_BANK_TRANSFER')}
-                        >
-                           계좌이체
-                        </Button>
-
-                        {/* 간편결제 */}
-                        <Button
-                           variant={paymentMethod === 'PAY_EASY' ? 'primary' : 'outline-secondary'}
-                           size="lg"
-                           className="text-start py-3"
-                           onClick={() => setPaymentMethod('PAY_EASY')}
-                        >
-                           간편결제
-                        </Button>
-
-                        {/* 휴대폰결제 */}
-                        <Button
-                           variant={paymentMethod === 'PAY_MOBILE' ? 'primary' : 'outline-secondary'}
-                           size="lg"
-                           className="text-start py-3"
-                           onClick={() => setPaymentMethod('PAY_MOBILE')}
-                        >
-                           휴대폰결제
-                        </Button>
-                     </div>
-                  </Card.Body>
-               </Card>
-
                {/* ----- 약관 동의 ----- */}
                <Card className="mb-4">
                   <Card.Header as="h5">약관 동의</Card.Header>
