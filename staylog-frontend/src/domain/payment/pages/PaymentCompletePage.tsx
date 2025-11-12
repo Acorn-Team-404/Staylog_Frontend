@@ -91,6 +91,15 @@ function PaymentCompletePage() {
     processPayment();
   }, [paymentKey, orderId, amount]);
 
+  useEffect(() => {
+  // 결제 성공 or 실패가 끝나면 URL 정리
+  if (!loading) {
+    if (window.history.replaceState) {
+      const cleanUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
+    }
+  }, [loading]);
   // 로딩 중
   if (loading) {
     return (
