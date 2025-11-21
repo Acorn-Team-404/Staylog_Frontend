@@ -83,16 +83,15 @@ function useNotificationInitializer() {
                const messageEvent = event as MessageEvent;
                const newNoti = JSON.parse(messageEvent.data);
 
-               // 새로운 알림 추가 액션
-               dispatch({
-                  type: 'PUSH_NOTIFICATION',
-                  payload: newNoti
-               });
-
                // 안읽은 알림 수 증가 액션
                dispatch({
                   type: 'INCREMENT_UNREAD_COUNT'
                });
+
+               const customEvent = new CustomEvent('EVENT_NEW_NOTIFICATION', {
+                  detail: newNoti
+               });
+               window.dispatchEvent(customEvent);
 
             } catch (e) {
                console.error('[SSE Hook] 새 알림 파싱 실패', e);
