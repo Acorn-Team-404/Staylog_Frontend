@@ -96,14 +96,14 @@ function Navbar() {
 
    return (
       <>
-         <nav className="navbar fixed-top navbar-expand-lg border-bottom border-1 border-secondary shadow-sm" style={{ backgroundColor: '#ebebebff' }}>
+         <nav className="navbar fixed-top navbar-expand-lg shadow-sm" style={{ backgroundColor: '#ffffffff' }}>
             <div className="container-fluid w-75">
                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                   <span className="navbar-toggler-icon"></span>
                </button>
 
                <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                  <Link to="/" className="navbar-brand flex-fill fs-3 fw-normal">STAYLOG</Link>
+                  <Link to="/" className="navbar-brand flex-fill fs-3 fw-normal"style={{ letterSpacing: "0.1em" }}>STAYLOG</Link>
 
                   <form className="d-flex flex-fill" role="search">
                      <input onClick={openSearchModal} className="form-control me-2 shadow-none" placeholder="Search" aria-label="Search" readOnly style={{ cursor: 'pointer' }} />

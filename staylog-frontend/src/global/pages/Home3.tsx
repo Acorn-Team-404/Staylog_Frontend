@@ -6,24 +6,16 @@ function Home3() {
   // 렌더할 섹션 정의 (원하는 만큼 추가 가능)
   const sections = [
     // 수도권 / 유명 지역 중심 상단
-    { title: "여기는 서울, 별점순", regionCode: "REGION_SEOUL", sort: "rating", limit: 6 },
-    { title: "여기는 부산, 리뷰 많은 순", regionCode: "REGION_BUSAN", sort: "review", limit: 6 },
-    { title: "전국, 최신 등록 숙소", regionCode: "", sort: "latest", limit: 6 },
+    { title: "전국 | 최신 등록 숙소", regionCode: "", sort: "latest", limit: 6 },
+    { title: "전국 | 별점순", regionCode: "", sort: "rating", limit: 6 },
+    { title: "푸른 자연 속 힐링, 강원 | 리뷰 많은 순", regionCode: "REGION_GANGWON", sort: "review", limit: 6 },
+    { title: "쉼이 필요할 때, 제주 | 별점순", regionCode: "REGION_JEJU", sort: "rating", limit: 6 },
+    { title: "바다 낭만 가득, 부산 | 리뷰 많은 순", regionCode: "REGION_BUSAN", sort: "review", limit: 6 },
+    { title: "트렌드의 시작, 서울 | 별점순", regionCode: "REGION_SEOUL", sort: "rating", limit: 6 }
 
     // 인기 여행지 묶어서
-    { title: "여기는 제주, 별점순", regionCode: "REGION_JEJU", sort: "rating", limit: 6 },
-    { title: "여기는 강릉, 리뷰 많은 순", regionCode: "REGION_GANGNEUNG", sort: "review", limit: 6 },
-    { title: "여기는 경주, 최신 등록 순", regionCode: "REGION_GYEONGJU", sort: "latest", limit: 6 },
 
     // 근교 / 여행지
-    { title: "여기는 전주, 별점순", regionCode: "REGION_JEONJU", sort: "rating", limit: 6 },
-    { title: "여기는 남원, 리뷰 많은 순", regionCode: "REGION_NAMWON", sort: "review", limit: 6 },
-    { title: "여기는 춘천, 최신 등록 순", regionCode: "REGION_CHUNCHEON", sort: "latest", limit: 6 },
-
-    // 광역 대도시
-    { title: "여기는 대전, 별점순", regionCode: "REGION_DAEJEON", sort: "rating", limit: 6 },
-    { title: "여기는 경상, 리뷰 많은 순", regionCode: "REGION_GYEONGSANG", sort: "review", limit: 6 },
-    { title: "여기는 전라, 최신 등록 순", regionCode: "REGION_JEOLLA", sort: "latest", limit: 6 },
   ];
 
   // 처음엔 3개만 보여주고, 스크롤 내려오면 3개씩 증가

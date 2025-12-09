@@ -279,6 +279,7 @@ function AdminAccommodationDetail() {
                             aspectRatio='21:9'
                             rounded={true}
                             arrowsOnHover={true}
+                            indicatorType='numbers-only'
                         />
                     </div>
 

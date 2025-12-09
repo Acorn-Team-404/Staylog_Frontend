@@ -67,49 +67,25 @@ export interface SetCommonCodesAction {
 // ==================================
 // 알림 액션
 
-// 알림 리스트 조회
-export interface SetNotiListAction {
-   type: 'SET_NOTIFICATION_LIST';
-   payload: responseNotificationsType[];
-}
-
-// 새 알림 1개를 목록에 추가
-export interface PushNotificationAction {
-   type: 'PUSH_NOTIFICATION';
-   payload: responseNotificationsType;
-}
-
-// 안읽은 알림 개수 가져오기
+// 안 읽은 알림 수 초기 설정 (로그인/새로고침 시)
 export interface SetUnreadCountAction {
    type: 'SET_UNREAD_COUNT';
    payload: number;
 }
 
-// 안 읽은 개수 1 증가
+// 안 읽은 수 1 증가 (새 알림 도착 시)
 export interface IncrementUnreadCountAction {
    type: 'INCREMENT_UNREAD_COUNT';
 }
 
-// 단일 알림 읽음 처리
-export interface MarkOneAsReadAction {
-   type: 'READ_ONE';
-   payload: number; // 읽음 처리할 notiId
+// 안 읽은 수 1 감소 (읽음 처리/삭제 시)
+export interface DecreaseUnreadCountAction {
+   type: 'DECREASE_UNREAD_COUNT';
 }
 
-// 모두 읽음 처리
-export interface MarkAllAsReadAction {
-   type: 'READ_ALL';
-}
-
-// 알림 삭제
-export interface DeleteNotificationAction {
-   type: 'DELETE_NOTIFICATION'
-   payload: number
-}
-
-// 특정 유저의 모든 알림 삭제
-export interface DeleteNotificationAllAction {
-   type: 'DELETE_NOTIFICATION_ALL'
+// 안 읽은 수 0으로 초기화 (전체 읽음/전체 삭제 시)
+export interface ResetUnreadCountAction {
+   type: 'RESET_UNREAD_COUNT';
 }
 
 
@@ -120,13 +96,9 @@ export type AppAction =
    | SetLogoutTimerAction
    | SetTokenAction
    | SetCommonCodesAction
-   | SetNotiListAction
-   | PushNotificationAction
    | SetUnreadCountAction
    | IncrementUnreadCountAction
-   | MarkAllAsReadAction
-   | DeleteNotificationAction
-   | DeleteNotificationAllAction
-   | MarkOneAsReadAction
+   | DecreaseUnreadCountAction
+   | ResetUnreadCountAction
    | UpdateNicknameAction //사람아이콘 왼쪽의 닉네임 업데이트 추가
    | UpdateProfileImageAction; // 프로필 이미지 업데이트 액션 추가

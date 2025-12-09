@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { getReservationList } from "../api/mypageApi";
 import useGetUserIdFromToken from "../../auth/hooks/useGetUserIdFromToken";
 import { Button, Card, Table, Badge } from "react-bootstrap";
-import { formatKST } from "../../../global/utils/date";
+import { formatKST, formatKSTDateOnly } from "../../../global/utils/date";
 import MypageReservationDetailModal from "../components/MypageReservationDetailModal";
 import MypagePagination from "../components/MypagePagination";
 
@@ -94,8 +94,8 @@ function ReservationSection() {
                                 <td className="text-wrap">{r.bookingNum || r.bookingId}</td>
                                 <td>{r.guestName}</td>
                                 <td>{r.accommodationName} / {r.roomName}</td>
-                                <td>{r.checkIn ? formatKST(r.checkIn).split("T")[0] : "—"}</td>
-                                <td>{r.checkOut ? formatKST(r.checkOut).split("T")[0] : "—"}</td>
+                                <td>{r.checkIn ? formatKSTDateOnly(r.checkIn).split("T")[0] : "—"}</td>
+                                <td>{r.checkOut ? formatKSTDateOnly(r.checkOut).split("T")[0] : "—"}</td>
                                 <td>{r.totalGuestCount}</td>
                                 <td>{getStatusBadge(r.status)}</td>
                                 <td>
@@ -129,10 +129,10 @@ function ReservationSection() {
                             <Card.Text><strong>투숙자명:</strong> {r.guestName}</Card.Text>
                             <Card.Text><strong>총 투숙인원:</strong> {r.totalGuestCount}</Card.Text>
                             <div className="d-flex justify-content-between text-sm">
-                                <span className="text-nowrap"><strong>체크인</strong> {r.checkIn ? formatKST(r.checkIn).split("T")[0] : "—"}</span>
+                                <span className="text-nowrap"><strong>체크인</strong> {r.checkIn ? formatKSTDateOnly(r.checkIn).split("T")[0] : "—"}</span>
                             </div>
                             <div className="d-flex justify-content-between text-sm">    
-                                <span className="text-nowrap"><strong>체크아웃</strong> {r.checkOut ? formatKST(r.checkOut).split("T")[0] : "—"}</span>
+                                <span className="text-nowrap"><strong>체크아웃</strong> {r.checkOut ? formatKSTDateOnly(r.checkOut).split("T")[0] : "—"}</span>
                             </div>
                             <Button variant="outline-dark" size="sm" className="w-100 mt-3 text-nowrap" onClick={() => openDetail(r.bookingId)}>
                                 상세 보기

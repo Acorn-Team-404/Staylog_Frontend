@@ -102,7 +102,7 @@ function onNavigate() {
             <hr className="my-2 border-secondary opacity-50" />
 
             <div className="d-flex justify-content-between align-items-baseline">
-              <Card.Text className="mb-0 fw-medium ms-3 fs-8 text-semiblack">{details.message}</Card.Text>
+              <Card.Text className="mb-0 fw-normal ms-3 fs-8 text-semiblack">{details.message}</Card.Text>
               <Card.Text as="small" className="mb-0 text-muted fs-10">{dayjs(createdAt).fromNow()}</Card.Text>
             </div>
           </div>

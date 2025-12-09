@@ -1,7 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import { type AdminReservation } from "../types/AdminReservationTypes";
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { formatKST } from "../../../global/utils/date";
+import { formatKST, formatKSTDateOnly } from "../../../global/utils/date";
 import api from "../../../global/api";
 import AdminReservationDetailModal from "../components/AdminReservationDetailModal";
 import AdminStatusPill from "../components/AdminStatusPill";
@@ -227,8 +227,8 @@ export default function AdminReservationPage() {
                         <td>{res.accommodationName ?? res.roomName ?? "—"}</td>
                         <td>{formatKST(res.createdAt)}</td>
                         <td>{res.finalAmount?.toLocaleString("ko-KR") ?? "-"}원</td>
-                        <td>{formatKST(res.checkIn)}</td>
-                        <td>{formatKST(res.checkOut)}</td>
+                        <td>{formatKSTDateOnly(res.checkIn)}</td>
+                        <td>{formatKSTDateOnly(res.checkOut)}</td>
                         <td>
                           <AdminStatusPill label={view.label} bgColor={view.color} />
                         </td>

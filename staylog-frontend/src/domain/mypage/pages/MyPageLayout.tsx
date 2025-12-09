@@ -71,7 +71,7 @@ function MyPageLayout() {
    }
 
    return (
-      <Container fluid className="pb-5 px-lg-0" style={{maxWidth: "1100px"}}>
+      <Container fluid className="pb-5 px-lg-0" style={{maxWidth: "1200px"}}>
          {/* 상단 인삿말 영역 */}
          <Card className="shadow-sm border-0 w-100 mb-4">
             <Card.Body className="p-4">

@@ -210,8 +210,9 @@ function AccommodationDetail() {
         targetType='ACCOMMODATION'
         targetId={accommodationId}
         aspectRatio='21:9'
-        rounded={true}
+        rounded={false}
         arrowsOnHover={true}
+        indicatorType='numbers-only'
       />
     </div>
 

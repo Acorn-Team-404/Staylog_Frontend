@@ -7,6 +7,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "react-datepicker/dist/react-datepicker.css";
 import store from './global/store'
 import { Provider } from 'react-redux'
+import './index.css'
 
 createRoot(document.getElementById('root')!).render(
 

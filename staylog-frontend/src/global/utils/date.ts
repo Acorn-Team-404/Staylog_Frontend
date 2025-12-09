@@ -55,3 +55,23 @@ export function formatDateToYYYYMMDD(date: Date | null): string {
 
   return `${year}-${month}-${day}`;
 }
+
+export function formatKSTDateOnly(dateStr?: string | null) {
+  if (!dateStr) return "—";
+
+  // 날짜만 있는 경우 그대로 반환
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    return dateStr;
+  }
+
+  const d = new Date(dateStr.includes("T") ? dateStr : dateStr.replace(" ", "T"));
+  if (isNaN(d.getTime())) return dateStr;
+
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const yyyy = d.getFullYear();
+  const MM = pad(d.getMonth() + 1);
+  const dd = pad(d.getDate());
+
+  return `${yyyy}-${MM}-${dd}`;
+}
+

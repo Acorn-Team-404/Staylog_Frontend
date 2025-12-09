@@ -401,6 +401,7 @@ function AdminRoomDetail() {
                         aspectRatio='21:9'
                         rounded={true}
                         arrowsOnHover={true}
+                        indicatorType='numbers-only'
                     />
 
                     <h4 className="fw-bold">{data.name}</h4>
