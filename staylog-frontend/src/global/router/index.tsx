@@ -51,26 +51,27 @@ import Home3 from "../pages/Home3";
 const routes: RouteObject[] = [
   { path: "/index.html", element: <Home /> }, // spring boot 최초 실행 정보 추가
   { path: "/", element: <Home3 /> },
+  { path: "/home", element: <Home3 /> }, // 홈 페이지 (동적 라우트보다 먼저 매칭)
   { path: "/login", element: <LoginForm /> },
-  { path: "/:boardType", element: <Boards /> },
-  { path: "/form/:boardType", element: <BoardForm /> },
-  { path: "/form/:boardType/:boardId", element: <BoardForm /> },
-  { path: "/board/:boardId", element: <BoardDetail /> },
   { path: "/signup", element: <SignupForm /> },
   { path: "/accommodations", element: <AccommodationListPage /> }, // 숙소 리스트 페이지
   { path: "/accommodations/:id", element: <AccommodationDetail />},
   { path: "/accommodations/:id/reviews", element: <AccommodationReviewList/> },
   { path: "/room/:roomId", element: <RoomDetail />},
+  { path: "/checkout", element: <CheckoutForm/>}, // 결제 페이지
+  { path: "/payment/complete", element: <PaymentCompletePage/>}, // 결제 완료 페이지
   { path: "/test-form", element: <TestForm /> },
   { path: "/test-load", element: <TestLoadImage /> },
   { path: "/quill", element: <BoardForm2/>}, //에디터 테스트
   { path: "/bord", element: <Board/>},//에디터 테스트
-  { path: "/checkout", element: <CheckoutForm/>}, // 결제 페이지
-  { path: "/payment/complete", element: <PaymentCompletePage/>}, // 결제 완료 페이지
-  { path: "/comments/:boardId", element: <CommentsPage /> },
   { path: "/testEditor", element: <TestEditorPage /> },
-  //{ path: "/home", element: <Home3 />},
   { path: "/testCarousel", element: <CarouselTestPage />},
+  // 동적 라우트는 마지막에 배치 (구체적인 경로가 먼저 매칭되도록)
+  { path: "/:boardType", element: <Boards /> },
+  { path: "/form/:boardType", element: <BoardForm /> },
+  { path: "/form/:boardType/:boardId", element: <BoardForm /> },
+  { path: "/board/:boardId", element: <BoardDetail /> },
+  { path: "/comments/:boardId", element: <CommentsPage /> },
 ];
 
 // Admin 중첩 라우트 객체를 별도로 정의
